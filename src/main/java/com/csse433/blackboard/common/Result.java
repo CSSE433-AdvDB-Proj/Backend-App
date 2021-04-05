@@ -5,6 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * Unified Response result class.
+ *
  * @author zhangx8
  */
 @Data
