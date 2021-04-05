@@ -1,6 +1,5 @@
 package com.csse433.blackboard.common;
 
-import lombok.Data;
 
 import java.io.Serializable;
 
@@ -9,7 +8,6 @@ import java.io.Serializable;
  *
  * @author zhangx8
  */
-@Data
 public class Result implements Serializable {
 
     /**
@@ -93,9 +91,9 @@ public class Result implements Serializable {
 
     private static Result makeResult(Object t, String message, String code) {
         Result result = new Result();
-        result.setCode(code);
-        result.setData(t);
-        result.setMsg(message);
+        result.code = code;
+        result.data = t;
+        result.msg = message;
         return result;
     }
 
