@@ -13,22 +13,22 @@ public class Result implements Serializable {
     /**
      * Success status code
      */
-    private static final String SUCCESS_CODE = "0";
+    private transient static final String SUCCESS_CODE = "0";
 
     /**
      * Error status code
      */
-    private static final String ERROR_CODE = "-1";
+    private transient static final String ERROR_CODE = "-1";
 
     /**
      * Error default message
      */
-    private static final String ERROR = "error";
+    private transient static final String ERROR = "error";
 
     /**
      * Success default message
      */
-    private static final String OK = "ok";
+    private transient static final String OK = "ok";
 
     /**
      * Status Code
@@ -44,6 +44,8 @@ public class Result implements Serializable {
      * Data
      */
     private Object data;
+
+    //***************** Public Operations *****************
 
     public static Result fail() {
         return makeErrorResult(null, ERROR);
@@ -61,10 +63,6 @@ public class Result implements Serializable {
         return makeErrorResult(o, message);
     }
 
-    private static Result makeErrorResult(Object t, String message) {
-        return makeResult(t, message, ERROR_CODE);
-    }
-
     public static Result success() {
         return makeSuccessResult(null, OK);
     }
@@ -79,6 +77,12 @@ public class Result implements Serializable {
 
     public static Result success(Object o, String message) {
         return makeSuccessResult(o, message);
+    }
+
+    //***************** Private Operations *****************
+
+    private static Result makeErrorResult(Object t, String message) {
+        return makeResult(t, message, ERROR_CODE);
     }
 
     private static Result makeSuccessResult(Object t, String message) {
