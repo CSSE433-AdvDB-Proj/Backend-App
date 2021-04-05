@@ -15,41 +15,57 @@
     <description>Rose-Hulman CSSE 433(Advanced Database) Project</description>
     <properties>
         <java.version>1.8</java.version>
+        <cassandra-version>2.4.4</cassandra-version>
+        <mongodb-version>2.4.4</mongodb-version>
+        <redis-version>2.4.4</redis-version>
+        <mail-version>2.4.4</mail-version>
+        <starter-web-version>2.4.4</starter-web-version>
+        <websocket-version>2.4.4</websocket-version>
+        <lombok-version>1.18.18</lombok-version>
+        <test-version>2.4.4</test-version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-cassandra</artifactId>
+            <version>${cassandra-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <version>${mongodb-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${redis-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+            <version>${mail-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${starter-web-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
+            <version>${websocket-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+            <version>${lombok-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>${test-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
