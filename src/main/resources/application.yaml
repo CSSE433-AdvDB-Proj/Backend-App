@@ -1,0 +1,22 @@
+spring:
+  data:
+    cassandra:
+      keyspace-name: blackboard
+      contact-points: 127.0.0.1
+      port: 9042
+      local-datacenter: datacenter1
+
+    mongodb:
+      database: Blackboard
+      host: 127.0.0.1
+      port: 27017
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: DidiHenryChet
+
+
+server:
+  servlet:
+    context-path: /blackboard
