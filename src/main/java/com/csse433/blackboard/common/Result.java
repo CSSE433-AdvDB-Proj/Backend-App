@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class Result implements Serializable {
 
+
     /**
      * Success status code
      */
