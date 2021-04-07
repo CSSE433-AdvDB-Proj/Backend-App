@@ -23,6 +23,7 @@
         <websocket-version>2.4.4</websocket-version>
         <lombok-version>1.18.18</lombok-version>
         <test-version>2.4.4</test-version>
+        <commons-lang3-version>3.11</commons-lang3-version>
     </properties>
     <dependencies>
         <dependency>
@@ -72,6 +73,11 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3-version}</version>
         </dependency>
     </dependencies>
 

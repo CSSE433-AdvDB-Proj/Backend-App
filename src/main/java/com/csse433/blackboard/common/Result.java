@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Unified Response result class.
  *
- * @author zhangx8
+ * @author chetzhang
  */
 public class Result implements Serializable {
 
