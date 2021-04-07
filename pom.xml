@@ -21,7 +21,7 @@
         <mail-version>2.4.4</mail-version>
         <starter-web-version>2.4.4</starter-web-version>
         <websocket-version>2.4.4</websocket-version>
-        <lombok-version>1.18.18</lombok-version>
+        <lombok-version>1.18.20</lombok-version>
         <test-version>2.4.4</test-version>
         <commons-lang3-version>3.11</commons-lang3-version>
     </properties>
