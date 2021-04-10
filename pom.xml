@@ -21,8 +21,9 @@
         <mail-version>2.4.4</mail-version>
         <starter-web-version>2.4.4</starter-web-version>
         <websocket-version>2.4.4</websocket-version>
-        <lombok-version>1.18.18</lombok-version>
+        <lombok-version>1.18.20</lombok-version>
         <test-version>2.4.4</test-version>
+        <commons-lang3-version>3.11</commons-lang3-version>
         <swagger-version>3.0.0</swagger-version>
     </properties>
     <dependencies>
@@ -78,6 +79,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>${swagger-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3-version}</version>
         </dependency>
     </dependencies>
 
