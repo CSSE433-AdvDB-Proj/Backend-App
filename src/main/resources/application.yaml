@@ -1,22 +1,40 @@
+
 spring:
   data:
     cassandra:
       keyspace-name: blackboard
-      contact-points: 127.0.0.1
+      contact-points: ${server-config.ip}
       port: 9042
       local-datacenter: datacenter1
+      username: ${global.db-usrnm}
+      password: ${global.db-pswd}
 
     mongodb:
-      database: Blackboard
-      host: 127.0.0.1
+      database: blackboard
+      host: ${server-config.ip}
       port: 27017
+      username: ${global.db-usrnm}
+      password: ${global.db-pswd}
 
   redis:
-    host: 127.0.0.1
+    host: ${server-config.ip}
     port: 6379
-    password: DidiHenryChet
+    password: ${global.db-pswd}
+  profiles:
+    active: china
 
 
 server:
   servlet:
     context-path: /blackboard
+
+#Server Config
+#Host-name: csse
+#Password: DidiHenryChet433*
+#IP: 8.140.144.182
+#Username: root
+
+
+global:
+  db-usrnm: admin
+  db-pswd: DidiHenryChet
