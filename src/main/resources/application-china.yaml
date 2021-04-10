@@ -1,2 +1,24 @@
 server-config:
   ip: 8.140.144.182
+
+spring:
+  data:
+    cassandra:
+      keyspace-name: blackboard
+      contact-points: ${server-config.ip}
+      port: 9042
+      local-datacenter: datacenter1
+      username: ${global.db-usrnm}
+      password: ${global.db-pswd}
+
+    mongodb:
+      database: blackboard
+      host: ${server-config.ip}
+      port: 27017
+      username: ${global.db-usrnm}
+      password: ${global.db-pswd}
+
+  redis:
+    host: ${server-config.ip}
+    port: 6379
+    password: ${global.db-pswd}
