@@ -59,6 +59,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean login(String username, String password, HttpServletResponse response) {
         UserEntity userEntity = authDao.getUserByUsername(username);
+        if (userEntity == null) {
+            return false;
+        }
         String passwordHash = userEntity.getPasswordHash();
         String passwordSalt = userEntity.getPasswordSalt();
 
