@@ -1,6 +1,8 @@
 package com.csse433.blackboard.common;
 
 
+import lombok.Getter;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,8 @@ import java.io.Serializable;
  *
  * @author chetzhang
  */
-public class Result implements Serializable {
+@Getter
+public class Result<T>  {
 
 
     /**
@@ -44,59 +47,58 @@ public class Result implements Serializable {
     /**
      * Data
      */
-    private Object data;
+    private T data;
 
     //***************** Public Operations *****************
 
-    public static Result fail() {
+    public static <T> Result<T> fail() {
         return makeErrorResult(null, ERROR);
     }
 
-    public static Result fail(Object o) {
-        return makeErrorResult(o, ERROR);
+    public static <T> Result<T> fail(T t) {
+        return makeErrorResult(t, ERROR);
     }
 
-    public static Result fail(String message) {
+    public static <T> Result<T> fail(String message) {
         return makeErrorResult(null, message);
     }
 
-    public static Result fail(Object o, String message) {
-        return makeErrorResult(o, message);
+    public static <T> Result<T> fail(T t, String message) {
+        return makeErrorResult(t, message);
     }
 
-    public static Result success() {
+    public static <T> Result<T> success() {
         return makeSuccessResult(null, OK);
     }
 
-    public static Result success(Object o) {
-        return makeSuccessResult(o, OK);
+    public static <T> Result<T> success(T t) {
+        return makeSuccessResult(t, OK);
     }
 
-    public static Result success(String message) {
+    public static <T> Result<T> success(String message) {
         return makeSuccessResult(null, message);
     }
 
-    public static Result success(Object o, String message) {
-        return makeSuccessResult(o, message);
+    public static <T> Result<T> success(T t, String message) {
+        return makeSuccessResult(t, message);
     }
 
     //***************** Private Operations *****************
 
-    private static Result makeErrorResult(Object t, String message) {
+    private static <T> Result<T> makeErrorResult(T t, String message) {
         return makeResult(t, message, ERROR_CODE);
     }
 
-    private static Result makeSuccessResult(Object t, String message) {
+    private static <T> Result<T> makeSuccessResult(T t, String message) {
         return makeResult(t, message, SUCCESS_CODE);
     }
 
-    private static Result makeResult(Object t, String message, String code) {
-        Result result = new Result();
+    private static <T> Result<T> makeResult(T t, String message, String code) {
+        Result<T> result = new Result<>();
         result.code = code;
         result.data = t;
         result.msg = message;
         return result;
     }
-
 
 }

@@ -15,6 +15,7 @@ public class Constants {
     /**
      * Login Token in Request Header
      */
-    public static final String TOKEN_HEADER = "blackboard-token";
+    public static final String TOKEN_HEADER = "Blackboard-Token";
 
+    public static final long TOKEN_EXPIRE_TIME = 10L;
 }

@@ -1,4 +1,4 @@
-package com.csse433.blackboard.auth;
+package com.csse433.blackboard.common;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
@@ -14,10 +14,14 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
+ * Resolve UserAccountDto from Controller Method.
+ *
  * @author chetzhang
  */
 @Component
 public class UserAccountResolver implements HandlerMethodArgumentResolver {
+
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterType().equals(UserAccountDto.class);

@@ -1,14 +1,9 @@
 package com.csse433.blackboard.config;
 
-import com.csse433.blackboard.auth.UserAccountResolver;
+import com.csse433.blackboard.common.UserAccountResolver;
 import com.csse433.blackboard.auth.interceptor.AuthInterceptor;
 import com.csse433.blackboard.util.SpringUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import com.datastax.oss.driver.shaded.guava.common.collect.Lists;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -17,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author chetzhang
@@ -24,8 +20,9 @@ import java.util.List;
 @Component
 public class CustomizedWebMvcConfiguration implements WebMvcConfigurer {
 
-    List<String> patterns = Collections.singletonList(
-            "/sys/**"
+    List<String> patterns = Arrays.asList(
+            "/sys/**",
+            "/error"
     );
 
 
@@ -39,7 +36,9 @@ public class CustomizedWebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/**").excludePathPatterns(patterns);
+        AuthInterceptor authInterceptor = (AuthInterceptor) SpringUtil.getBean("AuthInterceptor");
+        Objects.requireNonNull(authInterceptor);
+        registry.addInterceptor(authInterceptor).addPathPatterns("/**").excludePathPatterns(patterns);
     }
 
 

@@ -26,6 +26,7 @@
         <commons-lang3-version>3.11</commons-lang3-version>
         <swagger-version>3.0.0</swagger-version>
         <fastjson-version>1.2.58</fastjson-version>
+        <jwt-version>3.15.0</jwt-version>
     </properties>
     <dependencies>
         <dependency>
@@ -90,6 +91,11 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${jwt-version}</version>
         </dependency>
     </dependencies>
 
