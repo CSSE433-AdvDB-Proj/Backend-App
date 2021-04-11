@@ -7,5 +7,14 @@ package com.csse433.blackboard.common;
  */
 public class Constants {
 
+    /**
+     * Login token in Redis
+     */
+    public static final String TOKEN_KEY = "Auth:Token:";
+
+    /**
+     * Login Token in Request Header
+     */
+    public static final String TOKEN_HEADER = "blackboard-token";
 
 }
