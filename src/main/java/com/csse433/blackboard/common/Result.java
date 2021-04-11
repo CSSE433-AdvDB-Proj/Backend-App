@@ -17,12 +17,12 @@ public class Result<T>  {
     /**
      * Success status code
      */
-    private transient static final String SUCCESS_CODE = "0";
+    private transient static final Integer SUCCESS_CODE = 0;
 
     /**
      * Error status code
      */
-    private transient static final String ERROR_CODE = "-1";
+    private transient static final Integer ERROR_CODE = -1;
 
     /**
      * Error default message
@@ -37,7 +37,7 @@ public class Result<T>  {
     /**
      * Status Code
      */
-    private String code;
+    private Integer code;
 
     /**
      * Message
@@ -93,7 +93,7 @@ public class Result<T>  {
         return makeResult(t, message, SUCCESS_CODE);
     }
 
-    private static <T> Result<T> makeResult(T t, String message, String code) {
+    private static <T> Result<T> makeResult(T t, String message, Integer code) {
         Result<T> result = new Result<>();
         result.code = code;
         result.data = t;

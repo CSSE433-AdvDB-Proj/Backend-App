@@ -23,6 +23,7 @@ public class CustomizedWebMvcConfiguration implements WebMvcConfigurer {
     List<String> patterns = Arrays.asList(
             "/sys/**",
             "/error"
+//            "/wrong/**"
     );
 
 
