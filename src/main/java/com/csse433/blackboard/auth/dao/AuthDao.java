@@ -46,6 +46,10 @@ public class AuthDao {
         redisTemplate.expire(TokenUtil.getLoginTokenKey(token), Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
     }
 
+    public void deleteToken(String token) {
+        redisTemplate.delete(TokenUtil.getLoginTokenKey(token));
+    }
+
     public void setNewToken(String username, String newToken) {
         redisTemplate.opsForValue().set(TokenUtil.getLoginTokenKey(newToken), username, Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
     }

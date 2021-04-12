@@ -32,6 +32,9 @@ public class AuthServiceImpl implements AuthService {
     public UserAccountDto findUserByToken(String token) {
         String username = authDao.getUsernameByToken(token);
         UserEntity userEntity = authDao.getUserByUsername(username);
+        if (userEntity == null) {
+            return null;
+        }
         UserAccountDto userAccountDto = new UserAccountDto();
         BeanUtils.copyProperties(userEntity, userAccountDto);
         return userAccountDto;
@@ -41,6 +44,10 @@ public class AuthServiceImpl implements AuthService {
     public void extendExpireTime(String token) {
         authDao.extendExpireTime(token);
     }
+
+    @Override
+    public void deleteToken(String token) { authDao.deleteToken(token); }
+
 
     @Override
     public boolean registerUser(UserAccountDto userAccountDto) {
