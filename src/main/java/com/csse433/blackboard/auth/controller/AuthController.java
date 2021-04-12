@@ -48,12 +48,6 @@ public class AuthController {
 
     }
 
-    @PostMapping(value = "/logout")
-    public Result<?> logout() {
-
-        return null;
-    }
-
     @PostMapping("/login")
     public Result<?> login(@RequestBody UserAccountDto userAccountDto, HttpServletResponse response){
         String username = userAccountDto.getUsername();

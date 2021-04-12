@@ -6,12 +6,14 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.pojos.cassandra.UserEntity;
 import com.csse433.blackboard.util.TokenUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -58,10 +60,40 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setPasswordHash(encryptWithSalt(password, salt));
         userEntity.setPasswordSalt(salt);
         return authDao.createUser(userEntity);
-
     }
 
-
+    @Override
+    public boolean updateUser(String token, UserAccountDto userAccountDto) {
+        UserEntity userEntity = authDao.getUserByUsername(authDao.getUsernameByToken(token));
+        Field[] fields = userAccountDto.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                String fieldValue = (String) field.get(userAccountDto);
+                if(!StringUtils.isBlank(fieldValue)) {
+                    switch (field.getName()) {
+                        case "firstName":
+                            userEntity.setFirstName(userAccountDto.getFirstName());
+                            break;
+                        case "lastName":
+                            userEntity.setLastName(userAccountDto.getLastName());
+                            break;
+                        case "nickname":
+                            userEntity.setNickname(userAccountDto.getNickname());
+                            break;
+                        case "email":
+                            userEntity.setEmail(userAccountDto.getEmail());
+                            break;
+                            // TODO: Reset password? New route?
+                        default:
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return authDao.updateUser(userEntity);
+    }
 
     @Override
     public boolean login(String username, String password, HttpServletResponse response) {
@@ -92,8 +124,6 @@ public class AuthServiceImpl implements AuthService {
      * @return The encrypted password.
      */
     private String encryptWithSalt(String password, String salt) {
-
-
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");

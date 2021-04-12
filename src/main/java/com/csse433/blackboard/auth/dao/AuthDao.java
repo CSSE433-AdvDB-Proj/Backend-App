@@ -4,7 +4,6 @@ import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.pojos.cassandra.UserEntity;
 import com.csse433.blackboard.util.TokenUtil;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
@@ -23,7 +22,7 @@ public class AuthDao {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    public boolean createUser(UserEntity userEntity){
+    public boolean createUser(UserEntity userEntity) {
         UserEntity existingUser = getUserByUsername(userEntity.getUsername());
         if (existingUser != null) {
             return false;
@@ -32,7 +31,12 @@ public class AuthDao {
         return true;
     }
 
-    public UserEntity getUserByUsername(String username){
+    public boolean updateUser(UserEntity userEntity) {
+        cassandraTemplate.update(userEntity);
+        return true;
+    }
+
+    public UserEntity getUserByUsername(String username) {
         String cql = String.format("SELECT * FROM blackboard.user WHERE username = '%s';", username);
         return cassandraTemplate.selectOne(cql, UserEntity.class);
     }
