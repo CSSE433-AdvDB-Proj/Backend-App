@@ -1,12 +1,14 @@
 package com.csse433.blackboard.auth.service;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author chetzhang
  */
+@Service
 public interface AuthService {
 
     /**
@@ -31,6 +33,20 @@ public interface AuthService {
     boolean registerUser(UserAccountDto userAccountDto);
 
 
+    /**
+     * Deletes the token when a user tries to log out.
+     *
+     * @param token Token in the request header.
+     */
+    void deleteToken(String token);
+
+
+    /**
+     * Update account information
+     * @param userAccountDto
+     * @return
+     */
+    boolean updateUser(String token, UserAccountDto userAccountDto);
 
     /**
      * Login.

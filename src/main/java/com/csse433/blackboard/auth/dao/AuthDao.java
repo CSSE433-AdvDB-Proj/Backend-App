@@ -39,6 +39,11 @@ public class AuthDao {
         return true;
     }
 
+    public boolean updateUser(UserEntity userEntity) {
+        cassandraTemplate.update(userEntity);
+        return true;
+    }
+
     /**
      * Find a user with the username.
      *
@@ -68,9 +73,14 @@ public class AuthDao {
         TokenUtil.setTokenExpireTime(token, Constants.TOKEN_EXPIRE_TIME);
     }
 
+    /**
+     * Kill token.
+     * @param token
+     */
     public void killToken(String token){
         TokenUtil.setTokenExpireTime(token, Constants.TOKEN_EXPIRE_IMMEDIATELY);
     }
+
 
 
 
