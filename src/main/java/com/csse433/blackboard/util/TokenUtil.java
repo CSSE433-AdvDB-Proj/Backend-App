@@ -6,10 +6,15 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.csse433.blackboard.common.Constants;
+import io.netty.util.HashedWheelTimer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  *
  * @author chetzhang
@@ -19,6 +24,9 @@ public class TokenUtil {
     private static final long EXPIRE_DATE=30*60*100000;
     //token秘钥
     private static final String TOKEN_SECRET = "ZCfasfhuaUUHufguGuwu2020BQWE";
+    
+    @Autowired
+    private static RedisTemplate redisTemplate;
 
     public static String token (String username){
 
@@ -63,5 +71,14 @@ public class TokenUtil {
      */
     public static String getLoginTokenKey(String token){
         return Constants.TOKEN_KEY + token;
+    }
+
+    /**
+     * Set token expire time.
+     * @param token
+     * @param tokenExpireTime
+     */
+    public static void setTokenExpireTime(String token, long tokenExpireTime) {
+        redisTemplate.expire(TokenUtil.getLoginTokenKey(token), tokenExpireTime, TimeUnit.MINUTES);
     }
 }

@@ -17,5 +17,13 @@ public class Constants {
      */
     public static final String TOKEN_HEADER = "Blackboard-Token";
 
+    /**
+     * Token expire time. Default is 10 minutes.
+     */
     public static final long TOKEN_EXPIRE_TIME = 10L;
+
+    /**
+     * Set expire time to be this to delete token immediately.
+     */
+    public static final long TOKEN_EXPIRE_IMMEDIATELY = 0L;
 }

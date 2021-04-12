@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void extendExpireTime(String token) {
-        authDao.extendExpireTime(token);
+        authDao.extendTokenExpireTime(token);
     }
 
     @Override
