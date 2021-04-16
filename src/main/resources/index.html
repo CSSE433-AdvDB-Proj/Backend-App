@@ -15,7 +15,7 @@
         }
 
         function connect() {
-            var socket = new SockJS("http://localhost:8080/blackboard/msg?");
+            var socket = new SockJS("http://localhost:8080/blackboard/msg");
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
                 setConnected(true);
@@ -41,15 +41,19 @@
             console.log("Disconnected");
         }
 
-        function sendName() {
+        f
+
+        function send() {
+            const user = document.getElementById('user').value;
             const name = document.getElementById('name').value;
+            const content = document.getElementById('content').value;
             console.info();
             stompClient.send("/toUser", {}, JSON.stringify(
                 {
-                    'from': name,
+                    'from': user,
                     'to': name,
                     'type': 'message',
-                    'content': 'Hello World!',
+                    'content': content,
                     'token': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImhlbGxvIn0.lE_jDKdInA8HRFCLCeBw6ekBJ_f29oyLpbpTog9iM34"
                 }));
         }
@@ -62,6 +66,7 @@
 <div>
     <div>
         <label>用户</label>
+        <label>User2</label>
         <input type="text" id="user"/>
         <button id="connect" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
@@ -69,7 +74,8 @@
     <div id="conversationDiv">
         <label>名字</label>
         <input type="text" id="name"/>
-        <button id="sendName" onclick="sendName();">Send</button>
+        <input type="text" id="content">
+        <button id="sendName" onclick="send();">Send</button>
         <p id="response"></p>
     </div>
 </div>
