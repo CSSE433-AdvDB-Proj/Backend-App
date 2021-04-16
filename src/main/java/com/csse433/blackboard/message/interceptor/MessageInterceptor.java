@@ -32,6 +32,7 @@ public class MessageInterceptor implements HandshakeInterceptor {
                                    ServerHttpResponse serverHttpResponse,
                                    WebSocketHandler webSocketHandler,
                                    Map<String, Object> map) throws Exception {
+
         return false;
     }
 

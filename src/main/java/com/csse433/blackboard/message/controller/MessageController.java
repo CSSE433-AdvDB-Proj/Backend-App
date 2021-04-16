@@ -1,6 +1,7 @@
 package com.csse433.blackboard.message.controller;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.message.dto.MessageDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -24,11 +25,23 @@ public class MessageController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    private AuthService authService;
+
     @MessageMapping("/toUser")
     public void toUser(MessageDto messageDto) {
         log.info(messageDto.toString());
+        UserAccountDto user = authService.findUserByToken(messageDto.getToken());
+        if (user == null) {
+            log.info("token is invalid");
+            return;
+        }
+        String usernameFromToken = user.getUsername();
+        if (!messageDto.getFrom().equals(usernameFromToken)) {
+            log.info("Token does not correspond to current user.");
+            return;
+        }
         messagingTemplate.convertAndSendToUser(messageDto.getTo(), "/response", messageDto.getContent());
-        // /user/zhangx8/response
     }
 
     @MessageMapping("/toGroup")

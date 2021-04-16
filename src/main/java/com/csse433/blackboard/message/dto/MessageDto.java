@@ -9,4 +9,5 @@ public class MessageDto {
     //private String type;
     private String content;
     private long timestamp;
+    private String token;
 }
