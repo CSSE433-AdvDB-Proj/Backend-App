@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void deleteToken(String token) { authDao.deleteToken(token); }
+    public void deleteToken(String token) { authDao.killToken(token); }
 
 
     @Override
