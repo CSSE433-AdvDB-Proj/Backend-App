@@ -26,16 +26,16 @@ public class MessageController {
     @MessageMapping("/toUser")
     public void toUser(InboundMessageDto inboundMessageDto) {
         log.info(inboundMessageDto.toString());
-        UserAccountDto user = authService.findUserByToken(inboundMessageDto.getToken());
-        if (user == null) {
-            log.info("token is invalid");
-            return;
-        }
-        String usernameFromToken = user.getUsername();
-        if (!inboundMessageDto.getFrom().equals(usernameFromToken)) {
-            log.info("Token does not correspond to current user.");
-            return;
-        }
+//        UserAccountDto user = authService.findUserByToken(inboundMessageDto.getToken());
+//        if (user == null) {
+//            log.info("token is invalid");
+//            return;
+//        }
+//        String usernameFromToken = user.getUsername();
+//        if (!inboundMessageDto.getFrom().equals(usernameFromToken)) {
+//            log.info("Token does not correspond to current user.");
+//            return;
+//        }
         messagingTemplate.convertAndSendToUser(inboundMessageDto.getTo(), "/response", inboundMessageDto.getContent());
     }
 
