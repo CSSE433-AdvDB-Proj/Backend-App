@@ -13,6 +13,11 @@ public class Constants {
     public static final String TOKEN_KEY = "Auth:Token:";
 
     /**
+     * All online tokens
+     */
+    public static final String TOKEN_POOL = "Token_Pool";
+
+    /**
      * Login Token in Request Header
      */
     public static final String TOKEN_HEADER = "Blackboard-Token";

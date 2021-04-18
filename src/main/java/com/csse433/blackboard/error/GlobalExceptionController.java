@@ -24,7 +24,8 @@ public class GlobalExceptionController {
     @ExceptionHandler(value = Exception.class)
     public Result<?> exceptionHandler(Exception e){
         log.error(e.getMessage(), e.getCause());
-        return Result.fail("Unknown Message.");
+        e.printStackTrace();
+        return Result.fail("Unknown Error.");
     }
 
 }

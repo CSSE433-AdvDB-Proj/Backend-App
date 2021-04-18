@@ -14,9 +14,6 @@ public class GeneralException extends RuntimeException{
 //    @Autowired
 //    private ErrorLogService errorLogService;
 
-    public GeneralException(){
-        super();
-    }
 
     public GeneralException(String message) {
         super(message);
@@ -30,5 +27,10 @@ public class GeneralException extends RuntimeException{
     public static GeneralException ofNullTokenException() {
         log.info("Invalid token.");
         return new GeneralException("Token is null.");
+    }
+
+    public static Exception ofNullUserException(String invalidUsername) {
+        log.info("Invalid user: " + invalidUsername);
+        return new GeneralException("Invalid user: " + invalidUsername);
     }
 }

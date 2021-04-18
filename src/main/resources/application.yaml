@@ -11,7 +11,6 @@ server:
 #Password: DidiHenryChet433*
 #IP: 8.140.144.182
 #Username: root
-
 global:
   db-usrnm: admin
   db-pswd: DidiHenryChet

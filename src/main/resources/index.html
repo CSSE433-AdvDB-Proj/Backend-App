@@ -17,7 +17,7 @@
         function connect() {
             var socket = new SockJS("http://localhost:8080/blackboard/msg");
             stompClient = Stomp.over(socket);
-            stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImhlbGxvIn0.lE_jDKdInA8HRFCLCeBw6ekBJ_f29oyLpbpTog9iM34'}, function (frame) {
+            stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNoYWlxIn0.-vDkf2n53qEWMjpBDktybhBk9KPiOcWHMjXv8VgCjjs'}, function (frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(

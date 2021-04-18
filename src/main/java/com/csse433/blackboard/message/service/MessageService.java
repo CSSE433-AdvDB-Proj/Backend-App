@@ -1,11 +1,13 @@
 package com.csse433.blackboard.message.service;
 
+import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
-import com.csse433.blackboard.message.dto.NotifyMessageDto;
-import com.csse433.blackboard.pojos.mongo.MessageEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.csse433.blackboard.message.dto.NotifyMessageVo;
+import com.csse433.blackboard.message.dto.OutboundMessageVo;
+import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author chetzhang
@@ -13,7 +15,9 @@ import java.util.Date;
 public interface MessageService {
 
 
-    void insertMessage(InboundMessageDto inboundMessageDto, Date date);
+    void insertMessage(InboundMessageDto inboundMessageDto, long date);
 
-    NotifyMessageDto generateNotifyMessage(InboundMessageDto inboundMessageDto, Date date);
+    NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp);
+
+    List<OutboundMessageVo> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
 }

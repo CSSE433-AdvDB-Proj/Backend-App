@@ -115,6 +115,17 @@ public class AuthServiceImpl implements AuthService {
         return false;
     }
 
+    @Override
+    public String userExists(String... usernames) {
+
+        for (String username : usernames) {
+            UserEntity userByUsername = authDao.getUserByUsername(username);
+            if (userByUsername == null) {
+                return username;
+            }
+        }
+        return null;
+    }
 
 
     /**

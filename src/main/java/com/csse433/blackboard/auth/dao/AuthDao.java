@@ -78,6 +78,7 @@ public class AuthDao {
      * @param token
      */
     public void killToken(String token){
+        redisTemplate.opsForSet().remove(Constants.TOKEN_POOL, TokenUtil.getLoginTokenKey(token));
         TokenUtil.setTokenExpireTime(token, Constants.TOKEN_EXPIRE_IMMEDIATELY);
     }
 
@@ -91,6 +92,9 @@ public class AuthDao {
      * @param newToken
      */
     public void setNewToken(String username, String newToken) {
+        redisTemplate.opsForSet().add(Constants.TOKEN_POOL, TokenUtil.getLoginTokenKey(newToken));
         redisTemplate.opsForValue().set(TokenUtil.getLoginTokenKey(newToken), username, Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
     }
+
+
 }

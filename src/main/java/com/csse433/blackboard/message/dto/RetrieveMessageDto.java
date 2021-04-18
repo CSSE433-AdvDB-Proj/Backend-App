@@ -8,12 +8,12 @@ import lombok.Data;
  * @author chetzhang
  */
 @Data
-public class RetrieveMessageDto extends NotifyMessageDto{
+public class RetrieveMessageDto {
 
     /**
      * The timestamp of the incoming;
      */
-    private long timestamp;
+    private Long timestamp;
 
     /**
      * Chat's ID. (A unique id will be assigned to a conversation when the conversation is created)
@@ -23,6 +23,6 @@ public class RetrieveMessageDto extends NotifyMessageDto{
     /**
      * Mark if the conversation is a group chat. Default to false;
      */
-    private boolean isGroupChat = false;
+    private Boolean isGroupChat = false;
 
 }

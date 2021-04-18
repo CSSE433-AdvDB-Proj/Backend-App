@@ -2,6 +2,7 @@ package com.csse433.blackboard.pojos.mongo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
  * @author chetzhang
  */
 @Data
+@Document("Message")
 public class MessageEntity {
 
     /**
@@ -22,7 +24,7 @@ public class MessageEntity {
     /**
      * Timestamp.
      */
-    private Date date;
+    private Long timestamp;
 
     /**
      * The user who sends the message.

@@ -56,4 +56,12 @@ public interface AuthService {
      * @return
      */
     boolean login(String username, String password, HttpServletResponse response);
+
+    /**
+     * Check if provided users exist.
+     *
+     * @param username @return
+     * @return
+     */
+    String userExists(String... username);
 }
