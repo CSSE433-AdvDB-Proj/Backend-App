@@ -21,6 +21,7 @@
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
+                    // getUserTokenFromCache()
                     '/user/' + document.getElementById('user').value + '/response',
                     function (response) {
                         console.log('received message!')
@@ -41,12 +42,11 @@
             console.log("Disconnected");
         }
 
-        f
-
         function send() {
             const user = document.getElementById('user').value;
             const name = document.getElementById('name').value;
             const content = document.getElementById('content').value;
+            // const token = getToken()
             console.info();
             stompClient.send("/toUser", {}, JSON.stringify(
                 {
@@ -57,6 +57,8 @@
                     'token': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImhlbGxvIn0.lE_jDKdInA8HRFCLCeBw6ekBJ_f29oyLpbpTog9iM34"
                 }));
         }
+
+
     </script>
 </head>
 <body onload="disconnect()">
