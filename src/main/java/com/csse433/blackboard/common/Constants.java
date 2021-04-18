@@ -26,4 +26,14 @@ public class Constants {
      * Set expire time to be this to delete token immediately.
      */
     public static final long TOKEN_EXPIRE_IMMEDIATELY = 0L;
+
+    /**
+     * Personal chat destination address.
+     */
+    public static final String PERSONAL_CHAT = "/personal";
+
+    /**
+     * Group chat destination address.
+     */
+    public static final String GROUP_CHAT = "/group";
 }

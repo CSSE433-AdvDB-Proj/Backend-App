@@ -5,7 +5,7 @@ import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.Result;
-import org.apache.commons.lang3.StringUtils;
+import com.csse433.blackboard.error.GeneralException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -32,13 +32,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         String token = request.getHeader(Constants.TOKEN_HEADER);
         if (token == null) {
-            setReturn(response, "Login Token is null!");
-            return false;
+            throw GeneralException.ofNullTokenException();
         }
         UserAccountDto user = authService.findUserByToken(token);
         if (user == null) {
-            setReturn(response, "Token is invalid.");
-            return false;
+            throw GeneralException.ofInvalidTokenException();
         }
         authService.extendExpireTime(token);
         return true;

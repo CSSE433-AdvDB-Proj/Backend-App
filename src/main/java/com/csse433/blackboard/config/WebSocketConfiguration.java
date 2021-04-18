@@ -3,6 +3,7 @@ package com.csse433.blackboard.config;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
+import com.csse433.blackboard.error.GeneralException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -14,12 +15,9 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
-import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 
 import java.util.List;
 
@@ -58,13 +56,14 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                     List<String> nativeHeader = accessor.getNativeHeader(Constants.TOKEN_HEADER);
                     if(nativeHeader == null) {
                         log.info("No token header found.");
-                        return null;
+                        throw GeneralException.ofNullTokenException();
+//                        return null;
                     }
                     String token = nativeHeader.get(0);
                     UserAccountDto userByToken = authService.findUserByToken(token);
                     if (userByToken == null) {
                         log.info("Invalid token.");
-                        return null;
+                        throw GeneralException.ofInvalidTokenException();
                     }
 
                 }

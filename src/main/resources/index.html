@@ -21,7 +21,7 @@
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
-                    '/user/' + document.getElementById('user').value + '/response',
+                    '/user/' + document.getElementById('user').value + '/personal',
                     function (response) {
                         console.log('received message!')
                         const response1 = document.getElementById('response');
@@ -41,8 +41,6 @@
             console.log("Disconnected");
         }
 
-        f
-
         function send() {
             const user = document.getElementById('user').value;
             const name = document.getElementById('name').value;
@@ -54,7 +52,6 @@
                     'to': name,
                     'type': 'message',
                     'content': content,
-                    'token': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImhlbGxvIn0.lE_jDKdInA8HRFCLCeBw6ekBJ_f29oyLpbpTog9iM34"
                 }));
         }
     </script>
