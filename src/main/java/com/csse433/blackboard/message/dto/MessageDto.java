@@ -6,7 +6,6 @@ import lombok.Data;
 public class MessageDto {
     private String from;
     private String to;
-    //private String type;
     private String content;
     private long timestamp;
     private String token;
