@@ -17,6 +17,8 @@ import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author chetzhang
@@ -125,7 +127,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean checkPasswordConditions(String password) {
-        return true;
+        String regex = "(?=.*?[0-9])(?=.*?[A-Z]).{8,}$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(password).matches();
     }
 
     @Override
@@ -197,6 +201,5 @@ public class AuthServiceImpl implements AuthService {
         }
         return salt.toString();
     }
-
 
 }
