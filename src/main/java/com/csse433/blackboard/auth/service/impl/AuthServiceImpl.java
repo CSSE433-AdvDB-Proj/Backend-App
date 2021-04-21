@@ -20,6 +20,7 @@ import java.util.Random;
 
 /**
  * @author chetzhang
+ * @author henryyang
  */
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -48,14 +49,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void deleteToken(String token) { authDao.killToken(token); }
-
+    public void deleteToken(String token) {
+        authDao.killToken(token);
+    }
 
     @Override
     public boolean registerUser(UserAccountDto userAccountDto) {
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userAccountDto, userEntity);
         String password = userAccountDto.getPassword();
+        if (!checkPasswordConditions(password)) {
+            return false;
+        }
         String salt = generateSalt();
         userEntity.setPasswordHash(encryptWithSalt(password, salt));
         userEntity.setPasswordSalt(salt);
@@ -63,14 +68,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean updateUser(String token, UserAccountDto userAccountDto) {
+    public boolean updateUserInfo(String token, UserAccountDto userAccountDto) {
         UserEntity userEntity = authDao.getUserByUsername(authDao.getUsernameByToken(token));
         Field[] fields = userAccountDto.getClass().getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
             try {
                 String fieldValue = (String) field.get(userAccountDto);
-                if(!StringUtils.isBlank(fieldValue)) {
+                if (!StringUtils.isBlank(fieldValue)) {
                     switch (field.getName()) {
                         case "firstName":
                             userEntity.setFirstName(userAccountDto.getFirstName());
@@ -84,7 +89,6 @@ public class AuthServiceImpl implements AuthService {
                         case "email":
                             userEntity.setEmail(userAccountDto.getEmail());
                             break;
-                            // TODO: Reset password? New route?
                         default:
                     }
                 }
@@ -97,22 +101,40 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean login(String username, String password, HttpServletResponse response) {
-        UserEntity userEntity = authDao.getUserByUsername(username);
-        if (userEntity == null) {
-            return false;
-        }
-        String passwordHash = userEntity.getPasswordHash();
-        String passwordSalt = userEntity.getPasswordSalt();
-
-        String providedPassword = encryptWithSalt(password, passwordSalt);
-        boolean correct = providedPassword.equals(passwordHash);
-        if(correct){
+        boolean correct = verifyPassword(username, password);
+        if (correct) {
             String newToken = TokenUtil.token(username);
             authDao.setNewToken(username, newToken);
             response.setHeader(Constants.TOKEN_HEADER, newToken);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean verifyPassword(String username, String password) {
+        UserEntity userEntity = authDao.getUserByUsername(username);
+        if (userEntity == null) {
+            return false;
+        }
+        String passwordHash = userEntity.getPasswordHash();
+        String passwordSalt = userEntity.getPasswordSalt();
+        String providedPassword = encryptWithSalt(password, passwordSalt);
+        return providedPassword.equals(passwordHash);
+    }
+
+    @Override
+    public boolean checkPasswordConditions(String password) {
+        return true;
+    }
+
+    @Override
+    public boolean updateUserPassword(String username, String password) {
+        UserEntity userEntity = authDao.getUserByUsername(username);
+        String salt = generateSalt();
+        userEntity.setPasswordHash(encryptWithSalt(password, salt));
+        userEntity.setPasswordSalt(salt);
+        return authDao.updateUser(userEntity);
     }
 
     @Override
@@ -130,8 +152,9 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * Encrypt password with salt.
-     * @param password
-     * @param salt
+     *
+     * @param password password
+     * @param salt salt
      * @return The encrypted password.
      */
     private String encryptWithSalt(String password, String salt) {
@@ -163,6 +186,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * Randomly generates a salt.
+     *
      * @return
      */
     private String generateSalt() {
