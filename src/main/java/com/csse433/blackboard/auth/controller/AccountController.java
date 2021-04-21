@@ -26,7 +26,7 @@ public class AccountController {
     @PostMapping(value = "/update")
     public Result<?> updateAccountInfo(@RequestBody UserAccountDto userAccountDto,
                                        @RequestHeader(Constants.TOKEN_HEADER) String token) {
-        return authService.updateUser(token, userAccountDto) ? Result.success() : Result.fail("Update Failed.");
+        return authService.updateUserInfo(token, userAccountDto) ? Result.success() : Result.fail("Update Failed.");
     }
 
     @PostMapping(value = "/logout")
