@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -38,14 +38,20 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<OutboundMessageVo> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
+    public Map<String, List<OutboundMessageVo>> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
         List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
         for (RetrieveMessageDto dto : dtoList) {
             outboundMessageVos.addAll(messageDao.getMessage(userAccountDto, dto));
         }
-        return outboundMessageVos;
+        Optional<Long> max = outboundMessageVos.stream().map(OutboundMessageVo::getTimestamp).max(Long::compareTo);
+        max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
+        return outboundMessageVos.stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
     }
 
+    @Override
+    public Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto) {
+        return messageDao.getOfflineMessage(userAccountDto).stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
+    }
 
 
     @Override

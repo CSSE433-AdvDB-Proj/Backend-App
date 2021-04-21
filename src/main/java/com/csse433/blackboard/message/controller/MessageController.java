@@ -26,9 +26,13 @@ public class MessageController {
 
     @PostMapping("/getMessage")
     public Result<?> getMessage(@RequestBody List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto){
-        List<OutboundMessageVo> outbounds = messageService.getMessage(dtoList, userAccountDto);
-        Map<String, List<OutboundMessageVo>> messageMap = outbounds.stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
+        Map<String, List<OutboundMessageVo>> messageMap = messageService.getMessage(dtoList, userAccountDto);
         return Result.success(messageMap);
+    }
+
+    @PostMapping("/getOfflineMessage")
+    public Result<?> getOfflineMessage(UserAccountDto userAccountDto){
+        return Result.success(messageService.getOfflineMessage(userAccountDto));
     }
 
 }

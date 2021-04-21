@@ -8,6 +8,7 @@ import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chetzhang
@@ -19,5 +20,7 @@ public interface MessageService {
 
     NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp);
 
-    List<OutboundMessageVo> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
+    Map<String, List<OutboundMessageVo>> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
+
+    Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto);
 }
