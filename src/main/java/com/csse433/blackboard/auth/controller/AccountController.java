@@ -1,5 +1,6 @@
 package com.csse433.blackboard.auth.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
@@ -7,6 +8,8 @@ import com.csse433.blackboard.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author henryyang
@@ -32,13 +35,15 @@ public class AccountController {
     }
 
     @PostMapping(value = "/change_password")
-    public Result<?> changePassword(@RequestBody UserAccountDto userAccountDto,
-                                    @RequestBody String newPassword) {
+    public Result<?> changePassword(UserAccountDto userAccountDto,
+                                    @RequestBody Map<String,String> paramMap) {
+        String password = paramMap.get("password");
+        String newPassword = paramMap.get("newPassword");
         if (!authService.checkPasswordConditions(newPassword)) {
             return Result.fail("New password does not meet conditions.");
         }
         String username = userAccountDto.getUsername();
-        String password = userAccountDto.getPassword();
+//        String password = userAccountDto.getPassword();
         if (!authService.verifyPassword(username, password)) {
             return Result.fail("Old password is incorrect.");
         }

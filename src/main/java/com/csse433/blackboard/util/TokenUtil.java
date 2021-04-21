@@ -44,6 +44,7 @@ public class TokenUtil {
             //Generates signature with username.
             token = JWT.create()
                     .withHeader(header)
+                    .withClaim("date", new Date())
                     .withClaim("username", username)
                     .sign(algorithm);
         } catch (Exception e) {
@@ -76,14 +77,14 @@ public class TokenUtil {
         return Constants.TOKEN_KEY + token;
     }
 
-    /**
-     * Set token expire time.
-     *
-     * @param token
-     * @param tokenExpireTime
-     */
-    public static void setTokenExpireTime(String token, long tokenExpireTime) {
-        RedisTemplate redisTemplate = (RedisTemplate) SpringUtil.getBean("RedisTemplate");
-        redisTemplate.expire(TokenUtil.getLoginTokenKey(token), tokenExpireTime, TimeUnit.MINUTES);
-    }
+//    /**
+//     * Set token expire time.
+//     *
+//     * @param token
+//     * @param tokenExpireTime
+//     */
+//    public static void setTokenExpireTime(String token, long tokenExpireTime) {
+//        RedisTemplate redisTemplate = (RedisTemplate) SpringUtil.getBean("RedisTemplate");
+//        redisTemplate.expire(TokenUtil.getLoginTokenKey(token), tokenExpireTime, TimeUnit.MINUTES);
+//    }
 }
