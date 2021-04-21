@@ -12,11 +12,12 @@ spring:
       password: ${global.db-pswd}
 
     mongodb:
-      database: blackboard
       host: ${server-config.ip}
       port: 27017
       username: ${global.db-usrnm}
       password: ${global.db-pswd}
+      authentication-database: admin
+      database: blackboard
 
   redis:
     host: ${server-config.ip}

@@ -44,11 +44,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void extendExpireTime(String token) {
-        authDao.extendExpireTime(token);
+        authDao.extendTokenExpireTime(token);
     }
 
     @Override
-    public void deleteToken(String token) { authDao.deleteToken(token); }
+    public void deleteToken(String token) { authDao.killToken(token); }
 
 
     @Override
@@ -115,6 +115,17 @@ public class AuthServiceImpl implements AuthService {
         return false;
     }
 
+    @Override
+    public String userExists(String... usernames) {
+
+        for (String username : usernames) {
+            UserEntity userByUsername = authDao.getUserByUsername(username);
+            if (userByUsername == null) {
+                return username;
+            }
+        }
+        return null;
+    }
 
 
     /**
