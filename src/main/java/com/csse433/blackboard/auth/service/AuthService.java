@@ -1,6 +1,7 @@
 package com.csse433.blackboard.auth.service;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +47,15 @@ public interface AuthService {
      * @param userAccountDto
      * @return
      */
-    boolean updateUser(String token, UserAccountDto userAccountDto);
+    boolean updateUserInfo(String token, UserAccountDto userAccountDto);
+
+    /**
+     * update account password
+     * @param username username
+     * @param password password
+     * @return
+     */
+    boolean updateUserPassword(String username, String password);
 
     /**
      * Login.
@@ -64,4 +73,21 @@ public interface AuthService {
      * @return
      */
     String userExists(String... username);
+
+    /**
+     * Check if the password is correct
+     *
+     * @param username username
+     * @param password password
+     * @return whether the password is correct for this username
+     */
+    boolean verifyPassword(String username, String password);
+
+    /**
+     * Check if the password meets certain conditions
+     *
+     * @param password the new password
+     * @return whether the password meets conditions
+     */
+    boolean checkPasswordConditions(String password);
 }
