@@ -5,12 +5,8 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Field;
 
 /**
  * @author henryyang
@@ -33,6 +29,20 @@ public class AccountController {
     public Result<?> logout(@RequestHeader(Constants.TOKEN_HEADER) String token) {
         authService.deleteToken(token);
         return Result.success();
+    }
+
+    @PostMapping(value = "/change_password")
+    public Result<?> changePassword(@RequestBody UserAccountDto userAccountDto,
+                                    @RequestBody String newPassword) {
+        if (!authService.checkPasswordConditions(newPassword)) {
+            return Result.fail("New password does not meet conditions.");
+        }
+        String username = userAccountDto.getUsername();
+        String password = userAccountDto.getPassword();
+        if (!authService.verifyPassword(username, password)) {
+            return Result.fail("Old password is incorrect.");
+        }
+        return authService.updateUserPassword(username, newPassword) ? Result.success() : Result.fail("Update password failed");
     }
 
 }
