@@ -36,7 +36,7 @@ public class MessageDao {
     public List<OutboundMessageVo> getMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
         Query query = new Query();
         query
-                .addCriteria(Criteria.where("timestamp").gte(dto.getTimestamp()))
+                .addCriteria(Criteria.where("timestamp").is(dto.getTimestamp()))
                 .addCriteria(Criteria.where("from").is(dto.getChatId()))
                 .addCriteria(Criteria.where("to").is(userAccountDto.getUsername()));
         return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {

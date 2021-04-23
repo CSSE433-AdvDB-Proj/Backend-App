@@ -5,6 +5,7 @@
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
+<!--    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>-->
     <script type="text/javascript">
         var stompClient = null;
 
@@ -14,15 +15,33 @@
             $("#response").html();
         }
 
+        // function connect() {
+        //     var socket = new SockJS("http://localhost:8080/blackboard/msg");
+        //     stompClient = Stomp.over(socket);
+        //     stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MTk0MTU2LCJ1c2VybmFtZSI6InRlc3RhY2NvdW50In0.aW7C96dAeHntZXHdhjFPstOOyjLGEZlj4RsCvCnB17A'}, function (frame) {
+        //         setConnected(true);
+        //         console.log('Connected: ' + frame);
+        //         stompClient.subscribe(
+        //             '/user/' + document.getElementById('user').value + '/personal',
+        //             function (response) {
+        //                 console.log('received message!', response.body)
+        //                 setMsg(response.body);
+        //
+        //
+        //
+        //             });
+        //     });
+        // }
         function connect() {
             var socket = new SockJS("http://localhost:8080/blackboard/msg");
             stompClient = Stomp.over(socket);
-            stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MTk0MDAxLCJ1c2VybmFtZSI6InpoYW5neDgifQ.2onDOVcsdFgrrdU7Hian-9Uin48Sr0pRbim5Jx9XOkk'}, function (frame) {
+            stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MTk0MTU2LCJ1c2VybmFtZSI6InRlc3RhY2NvdW50In0.aW7C96dAeHntZXHdhjFPstOOyjLGEZlj4RsCvCnB17A'}, function (frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
                     '/user/' + document.getElementById('user').value + '/personal',
                     function (response) {
+
                         console.log('received message!')
                         const response1 = document.getElementById('response');
                         const p = document.createElement('p');
@@ -31,6 +50,28 @@
                         response1.appendChild(p);
                     });
             });
+        }
+
+        function setMsg(res){
+            $.ajax({
+                url:"http://localhost:8080/blackboard/message/getMessage",
+                contentType: "application/json;charset=utf-8",
+                type: "POST",
+                dataType: "text",
+                data: [
+                    {
+                        "timestamp": res.timestamp,
+                        "chatId": res.chatId
+                    }
+                ]
+
+            }).then(result => {
+                const response1 = document.getElementById('response');
+                const p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                p.appendChild(document.createTextNode(result));
+                response1.appendChild(p);
+            })
         }
 
         function disconnect() {
@@ -62,7 +103,7 @@
     Javascript and reload this page!</h2></noscript>
 <div>
     <div>
-        <label>test: zhangx8</label>
+        <label>testaccount</label>
         <input type="text" id="user"/>
         <button id="connect" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>

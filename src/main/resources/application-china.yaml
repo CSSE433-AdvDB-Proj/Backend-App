@@ -1,5 +1,6 @@
 server-config:
   ip: 8.140.144.182
+  cassandra-ip: 433-17.csse.rose-hulman.edu
 
 spring:
   data:
