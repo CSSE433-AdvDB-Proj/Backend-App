@@ -53,10 +53,14 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private void setReturn(HttpServletResponse response, String message) throws IOException {
-        response.setHeader("Access-Control-Allow-Credentials", "true");
         //UTF-8 Encoding
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=utf-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         Result failResult = Result.fail(message);
         String json = JSON.toJSONString(failResult);
         response.getWriter().print(json);

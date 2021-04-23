@@ -8,6 +8,7 @@ import com.datastax.oss.driver.shaded.guava.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -37,6 +38,11 @@ public class CustomizedWebMvcConfiguration implements WebMvcConfigurer {
         resolvers.add(userAccountResolver);
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins("*");
+//        WebMvcConfigurer.super.addCorsMappings(registry);
+    }
 
     @Autowired
     private AuthInterceptor authInterceptor;
