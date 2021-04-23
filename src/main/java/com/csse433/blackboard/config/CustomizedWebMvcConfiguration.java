@@ -40,7 +40,7 @@ public class CustomizedWebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*");
+        registry.addMapping("/**").allowedOrigins("*").exposedHeaders("Blackboard-Token");
 //        WebMvcConfigurer.super.addCorsMappings(registry);
     }
 
