@@ -1,7 +1,6 @@
 package com.csse433.blackboard.auth.service;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +63,7 @@ public interface AuthService {
      * @param response
      * @return
      */
-    boolean login(String username, String password, HttpServletResponse response);
+    UserAccountDto login(String username, String password, HttpServletResponse response);
 
     /**
      * Check if provided users exist.

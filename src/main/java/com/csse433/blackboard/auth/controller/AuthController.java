@@ -59,9 +59,9 @@ public class AuthController {
             return Result.fail("Please provide credentials.");
         }
 
-        boolean success = authService.login(username, password, response);
-        if (success) {
-            return Result.success();
+        UserAccountDto accountDto = authService.login(username, password, response);
+        if (accountDto != null) {
+            return Result.success(accountDto);
         }
         return Result.fail("Invalid credentials.");
     }

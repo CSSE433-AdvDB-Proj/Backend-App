@@ -4,6 +4,7 @@ import com.csse433.blackboard.auth.dao.AuthDao;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
+import com.csse433.blackboard.error.GeneralException;
 import com.csse433.blackboard.pojos.cassandra.UserEntity;
 import com.csse433.blackboard.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -99,15 +99,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean login(String username, String password, HttpServletResponse response) {
-        boolean correct = verifyPassword(username, password);
-        if (correct) {
+    public UserAccountDto login(String username, String password, HttpServletResponse response) {
+        if (verifyPassword(username, password)) {
             String newToken = TokenUtil.token(username);
             authDao.setNewToken(username, newToken);
             response.setHeader(Constants.TOKEN_HEADER, newToken);
-            return true;
+            return findUserByToken(newToken);
         }
-        return false;
+        return null;
     }
 
     @Override
