@@ -60,9 +60,6 @@ public class AuthServiceImpl implements AuthService {
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userAccountDto, userEntity);
         String password = userAccountDto.getPassword();
-        if (!checkPasswordConditions(password)) {
-            return false;
-        }
         String salt = generateSalt();
         userEntity.setPasswordHash(encryptWithSalt(password, salt));
         userEntity.setPasswordSalt(salt);

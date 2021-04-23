@@ -23,7 +23,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-//    @CrossOrigin(originPatterns = "*")
     @PostMapping(value = "/register")
     public Result<?> register(@RequestBody UserAccountDto userAccountDto, HttpServletResponse response) {
         Field[] fields = userAccountDto.getClass().getDeclaredFields();
@@ -31,7 +30,7 @@ public class AuthController {
             field.setAccessible(true);
             try {
                 String fieldValue = (String) field.get(userAccountDto);
-                if (StringUtils.isBlank(fieldValue)) {
+                if(StringUtils.isBlank(fieldValue)){
                     log.info(field.getName() + " can't be empty!");
                     return Result.fail(field.getName() + " can't be empty!");
                 }
@@ -39,9 +38,11 @@ public class AuthController {
                 e.printStackTrace();
             }
         }
-
+        if (!authService.checkPasswordConditions(userAccountDto.getPassword())) {
+            return Result.fail("Password does not meet conditions");
+        }
         boolean registerStatus = authService.registerUser(userAccountDto);
-        if (registerStatus) {
+        if(registerStatus){
             return Result.success();
         } else {
             log.info("Existing username.");
@@ -51,10 +52,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Result<?> login(@RequestBody UserAccountDto userAccountDto, HttpServletResponse response) {
+    public Result<?> login(@RequestBody UserAccountDto userAccountDto, HttpServletResponse response){
         String username = userAccountDto.getUsername();
         String password = userAccountDto.getPassword();
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(password)){
             return Result.fail("Please provide credentials.");
         }
 
