@@ -1,11 +1,14 @@
 <html lang="en-Us">
+
 <head>
     <meta charset="UTF-8">
     <title>Hello queue</title>
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
-<!--    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>-->
     <script type="text/javascript">
         var stompClient = null;
 
@@ -32,17 +35,27 @@
         //             });
         //     });
         // }
+
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MjMzODc4LCJ1c2VybmFtZSI6ImNoYWl0ZXN0MSJ9.ItabYM-2nOY8D1XroJrDrEzsGPaeGjjiaHcVJ6R6nyE"
+
         function connect() {
             var socket = new SockJS("http://localhost:8080/blackboard/msg");
             stompClient = Stomp.over(socket);
-            stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MTk0MTU2LCJ1c2VybmFtZSI6InRlc3RhY2NvdW50In0.aW7C96dAeHntZXHdhjFPstOOyjLGEZlj4RsCvCnB17A'}, function (frame) {
+            stompClient.connect({
+                'Blackboard-Token': token
+            }, function(frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
                     '/user/' + document.getElementById('user').value + '/personal',
-                    function (response) {
+                    function(response) {
 
                         console.log('received message!')
+                        axios.post("http://localhost:8080/blackboard/message/getMessage", {
+                            "Blackboard-Token": token
+                        }).then(res => {
+                            console.log(res)
+                        })
                         const response1 = document.getElementById('response');
                         const p = document.createElement('p');
                         p.style.wordWrap = 'break-word';
@@ -52,18 +65,16 @@
             });
         }
 
-        function setMsg(res){
+        function setMsg(res) {
             $.ajax({
-                url:"http://localhost:8080/blackboard/message/getMessage",
+                url: "http://localhost:8080/blackboard/message/getMessage",
                 contentType: "application/json;charset=utf-8",
                 type: "POST",
                 dataType: "text",
-                data: [
-                    {
-                        "timestamp": res.timestamp,
-                        "chatId": res.chatId
-                    }
-                ]
+                data: [{
+                    "timestamp": res.timestamp,
+                    "chatId": res.chatId
+                }]
 
             }).then(result => {
                 const response1 = document.getElementById('response');
@@ -87,35 +98,36 @@
             const name = document.getElementById('name').value;
             const content = document.getElementById('content').value;
             console.info();
-            stompClient.send("/toUser", {}, JSON.stringify(
-                {
-                    'from': user,
-                    'to': name,
-                    'type': 'message',
-                    'content': content,
-                }));
+            stompClient.send("/toUser", {}, JSON.stringify({
+                'from': user,
+                'to': name,
+                'type': 'message',
+                'content': content,
+            }));
         }
     </script>
 </head>
+
 <body onload="disconnect()">
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
     enabled. Please enable
     Javascript and reload this page!</h2></noscript>
-<div>
     <div>
-        <label>testaccount</label>
-        <input type="text" id="user"/>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        <div>
+            <label>testaccount</label>
+            <input type="text" id="user" />
+            <button id="connect" onclick="connect();">Connect</button>
+            <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        </div>
+        <div id="conversationDiv">
+            <label>name</label>
+            <input type="text" id="name" />
+            <input type="text" id="content">
+            <button id="sendName" onclick="send();">Send</button>
+            <p id="response"></p>
+        </div>
     </div>
-    <div id="conversationDiv">
-        <label>name</label>
-        <input type="text" id="name"/>
-        <input type="text" id="content">
-        <button id="sendName" onclick="send();">Send</button>
-        <p id="response"></p>
-    </div>
-</div>
 
 </body>
+
 </html>

@@ -1,10 +1,13 @@
 <html lang="en-Us">
+
 <head>
     <meta charset="UTF-8">
     <title>Hello queue</title>
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <script type="text/javascript">
         var stompClient = null;
 
@@ -14,15 +17,19 @@
             $("#response").html();
         }
 
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MjMzOTI3LCJ1c2VybmFtZSI6ImNoYWl0ZXN0MiJ9.lLiZ74yknS4qLwidRNzCHk4Wc_cpP0YWKeWLQa9baT4"
+
         function connect() {
             var socket = new SockJS("http://localhost:8080/blackboard/msg");
             stompClient = Stomp.over(socket);
-            stompClient.connect({'Blackboard-Token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MTk0MDAxLCJ1c2VybmFtZSI6InpoYW5neDgifQ.2onDOVcsdFgrrdU7Hian-9Uin48Sr0pRbim5Jx9XOkk'}, function (frame) {
+            stompClient.connect({
+                'Blackboard-Token': token
+            }, function(frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
                     '/user/' + document.getElementById('user').value + '/personal',
-                    function (response) {
+                    function(response) {
                         console.log('received message!')
                         const response1 = document.getElementById('response');
                         const p = document.createElement('p');
@@ -46,35 +53,36 @@
             const name = document.getElementById('name').value;
             const content = document.getElementById('content').value;
             console.info();
-            stompClient.send("/toUser", {}, JSON.stringify(
-                {
-                    'from': user,
-                    'to': name,
-                    'type': 'message',
-                    'content': content,
-                }));
+            stompClient.send("/toUser", {}, JSON.stringify({
+                'from': user,
+                'to': name,
+                'type': 'message',
+                'content': content,
+            }));
         }
     </script>
 </head>
+
 <body onload="disconnect()">
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
     enabled. Please enable
     Javascript and reload this page!</h2></noscript>
-<div>
     <div>
-        <label>test: zhangx8</label>
-        <input type="text" id="user"/>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        <div>
+            <label>test: zhangx8</label>
+            <input type="text" id="user" />
+            <button id="connect" onclick="connect();">Connect</button>
+            <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        </div>
+        <div id="conversationDiv">
+            <label>name</label>
+            <input type="text" id="name" />
+            <input type="text" id="content">
+            <button id="sendName" onclick="send();">Send</button>
+            <p id="response"></p>
+        </div>
     </div>
-    <div id="conversationDiv">
-        <label>name</label>
-        <input type="text" id="name"/>
-        <input type="text" id="content">
-        <button id="sendName" onclick="send();">Send</button>
-        <p id="response"></p>
-    </div>
-</div>
 
 </body>
+
 </html>
