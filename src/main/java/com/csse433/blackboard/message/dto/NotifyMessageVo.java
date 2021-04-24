@@ -1,5 +1,6 @@
 package com.csse433.blackboard.message.dto;
 
+import com.csse433.blackboard.common.MessageTypeEnum;
 import lombok.Data;
 
 /**
@@ -24,4 +25,15 @@ public class NotifyMessageVo {
      * Mark if the conversation is a group chat. Default to false;
      */
     private Boolean isGroupChat = false;
+
+    /**
+     * Message type.
+     */
+    private MessageTypeEnum type;
+
+
 }
+
+
+
+

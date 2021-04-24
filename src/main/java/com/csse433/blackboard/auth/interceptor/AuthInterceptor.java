@@ -32,15 +32,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        System.out.println(request.getHeaders());
+        if ("OPTIONS".equals(request.getMethod())) {
+            return true;
+        }
         String token = request.getHeader(Constants.TOKEN_HEADER);
-//        Enumeration<String> e = request.getHeaderNames();
-//        while (e.hasMoreElements()) {
-//            String param = e.nextElement();
-//            System.out.println(param);
-//        }
-        String userAgent = request.getHeader("user-agent");
-        System.out.println(userAgent);
+
         if (token == null) {
             log.info("No token header found.");
             setReturn(response, "No token header found.");
