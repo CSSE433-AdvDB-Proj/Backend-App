@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 
 /**
  * Login interceptor.
@@ -33,10 +34,19 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 //        System.out.println(request.getHeaders());
         String token = request.getHeader(Constants.TOKEN_HEADER);
+//        Enumeration<String> e = request.getHeaderNames();
+//        while (e.hasMoreElements()) {
+//            String param = e.nextElement();
+//            System.out.println(param);
+//        }
+        String userAgent = request.getHeader("user-agent");
+        System.out.println(userAgent);
         if (token == null) {
             log.info("No token header found.");
             setReturn(response, "No token header found.");
             return false;
+        } else {
+            log.info("Handling request from token: " + token);
         }
         UserAccountDto user = authService.findUserByToken(token);
         if (user == null) {
