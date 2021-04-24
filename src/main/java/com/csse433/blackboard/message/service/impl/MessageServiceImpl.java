@@ -11,6 +11,7 @@ import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

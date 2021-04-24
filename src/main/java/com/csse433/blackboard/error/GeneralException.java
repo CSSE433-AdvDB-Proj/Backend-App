@@ -19,18 +19,6 @@ public class GeneralException extends RuntimeException{
         super(message);
     }
 
-    public static GeneralException ofInvalidTokenException(){
-        log.info("No token header found.");
-        return new GeneralException("Token is invalid.");
-    }
 
-    public static GeneralException ofNullTokenException() {
-        log.info("Invalid token.");
-        return new GeneralException("Token is null.");
-    }
 
-    public static Exception ofNullUserException(String invalidUsername) {
-        log.info("Invalid user: " + invalidUsername);
-        return new GeneralException("Invalid user: " + invalidUsername);
-    }
 }

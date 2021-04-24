@@ -56,14 +56,13 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                     List<String> nativeHeader = accessor.getNativeHeader(Constants.TOKEN_HEADER);
                     if(nativeHeader == null) {
                         log.info("No token header found.");
-                        throw GeneralException.ofNullTokenException();
-//                        return null;
+                        return null;
                     }
                     String token = nativeHeader.get(0);
                     UserAccountDto userByToken = authService.findUserByToken(token);
                     if (userByToken == null) {
                         log.info("Invalid token.");
-                        throw GeneralException.ofInvalidTokenException();
+                        return null;
                     }
 
                 }
