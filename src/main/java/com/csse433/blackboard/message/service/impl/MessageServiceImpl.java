@@ -33,7 +33,7 @@ public class MessageServiceImpl implements MessageService {
     public NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp) {
         NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
         notifyMessageVo.setTimestamp(timestamp);
-        notifyMessageVo.setChatId(inboundMessageDto.getTo());
+        notifyMessageVo.setChatId(inboundMessageDto.getFrom());
         notifyMessageVo.setIsGroupChat(false);
         return notifyMessageVo;
     }
