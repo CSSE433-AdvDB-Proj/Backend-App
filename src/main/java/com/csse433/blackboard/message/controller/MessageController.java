@@ -18,20 +18,22 @@ import java.util.stream.Collectors;
  * @author chetzhang
  */
 @RestController
-@RequestMapping("/message")
+@RequestMapping(value = "/message")
+@CrossOrigin(originPatterns = "*", exposedHeaders = {"Blackboard-Token"}, allowedHeaders = {"Blackboard-Token"})
 public class MessageController {
 
     @Autowired
     private MessageService messageService;
 
+
     @PostMapping("/getMessage")
-    public Result<?> getMessage(@RequestBody List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto){
+    public Result<?> getMessage(@RequestBody List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
         Map<String, List<OutboundMessageVo>> messageMap = messageService.getMessage(dtoList, userAccountDto);
         return Result.success(messageMap);
     }
 
     @PostMapping("/getOfflineMessage")
-    public Result<?> getOfflineMessage(UserAccountDto userAccountDto){
+    public Result<?> getOfflineMessage(UserAccountDto userAccountDto) {
         return Result.success(messageService.getOfflineMessage(userAccountDto));
     }
 

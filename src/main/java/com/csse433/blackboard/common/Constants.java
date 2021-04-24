@@ -25,7 +25,7 @@ public class Constants {
     /**
      * Token expire time. Default is 10 minutes.
      */
-    public static final long TOKEN_EXPIRE_TIME = 10L;
+    public static final long TOKEN_EXPIRE_TIME = 100L;
 
     /**
      * Set expire time to be this to delete token immediately.

@@ -29,7 +29,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
+//        System.out.println(request.getHeaders());
         String token = request.getHeader(Constants.TOKEN_HEADER);
         if (token == null) {
             throw GeneralException.ofNullTokenException();
@@ -44,6 +44,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Blackboard-Token");
         HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 
@@ -59,7 +65,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setContentType("application/json;charset=utf-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Blackboard-Token");
 
         Result failResult = Result.fail(message);
         String json = JSON.toJSONString(failResult);

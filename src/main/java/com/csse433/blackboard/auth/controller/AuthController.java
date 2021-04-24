@@ -23,6 +23,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+
     @PostMapping(value = "/register")
     public Result<?> register(@RequestBody UserAccountDto userAccountDto, HttpServletResponse response) {
         Field[] fields = userAccountDto.getClass().getDeclaredFields();
