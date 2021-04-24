@@ -6,6 +6,7 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.Result;
 import com.csse433.blackboard.error.GeneralException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,6 +23,7 @@ import java.io.IOException;
  */
 
 @Component
+@Slf4j
 public class AuthInterceptor implements HandlerInterceptor {
 
     @Autowired
@@ -32,11 +34,15 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         String token = request.getHeader(Constants.TOKEN_HEADER);
         if (token == null) {
-            throw GeneralException.ofNullTokenException();
+            log.info("No token header found.");
+            setReturn(response, "No token header found.");
+            return false;
         }
         UserAccountDto user = authService.findUserByToken(token);
         if (user == null) {
-            throw GeneralException.ofInvalidTokenException();
+            log.info("Invalid token.");
+            setReturn(response, "Invalid token.");
+            return false;
         }
         authService.extendExpireTime(token);
         return true;
