@@ -1,3 +1,5 @@
+<!-- python3 -m http.server -->
+
 <html lang="en-Us">
 
 <head>
@@ -36,7 +38,7 @@
         //     });
         // }
 
-        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MjMzODc4LCJ1c2VybmFtZSI6ImNoYWl0ZXN0MSJ9.ItabYM-2nOY8D1XroJrDrEzsGPaeGjjiaHcVJ6R6nyE"
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjE5MjQzMTA3LCJ1c2VybmFtZSI6ImNoYWl0ZXN0MSJ9.quPzTtO5-O9lkIJlLp4k5RrBkgWIvPgdtOaJK5e2ox4"
 
         function connect() {
             var socket = new SockJS("http://localhost:8080/blackboard/msg");
@@ -51,8 +53,17 @@
                     function(response) {
 
                         console.log('received message!')
-                        axios.post("http://localhost:8080/blackboard/message/getMessage", {
-                            "Blackboard-Token": token
+                        let body = JSON.parse(response.body)
+                            //console.log(JSON.parse(response.body));
+                        let wrappedResponse = [{
+                            ...body,
+                            timestamp: body.timestamp - 1
+                        }]
+                        console.log(wrappedResponse)
+                        axios.post("http://localhost:8080/blackboard/message/getMessage", wrappedResponse, {
+                            headers: {
+                                "Blackboard-Token": token,
+                            }
                         }).then(res => {
                             console.log(res)
                         })
@@ -114,7 +125,7 @@
     Javascript and reload this page!</h2></noscript>
     <div>
         <div>
-            <label>testaccount</label>
+            <label>chaitest1</label>
             <input type="text" id="user" />
             <button id="connect" onclick="connect();">Connect</button>
             <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
