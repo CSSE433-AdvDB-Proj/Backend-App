@@ -7,7 +7,6 @@ import com.csse433.blackboard.friend.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,20 +34,13 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<UserAccountDto> getFriendList(String username) {
-        if (authService.userExists(username) != null) {
-            return Collections.emptyList();
-        }
         List<String> friendUsernames = friendDao.getFriendList(username);
         return friendUsernames.stream().map(friendUsername -> authService.getUserFromUsername(friendUsername)).collect(Collectors.toList());
     }
 
     @Override
-    public UserAccountDto searchUsername(String username) {
-        return null;
-    }
-
-    @Override
-    public List<UserAccountDto> searchFriendFuzzy(String likeUsername) {
-        return null;
+    public List<UserAccountDto> searchFriendFuzzy(String currentUsername, String likeUsername) {
+        List<String> fuzzyFriendUsernames = friendDao.findFriendFuzzy(currentUsername, likeUsername);
+        return fuzzyFriendUsernames.stream().map(friendUsername -> authService.getUserFromUsername(friendUsername)).collect(Collectors.toList());
     }
 }

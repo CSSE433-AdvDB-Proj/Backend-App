@@ -37,10 +37,43 @@ public class FriendDao {
                         return new Predicate(Operators.EQ, username);
                     }
                 })
-                .sort(Sort.by("username1").ascending());
+                .sort(Sort.by("username2").ascending());
 
 
         return cassandraTemplate.select(query, String.class);
 
+    }
+
+    public List<String> findFriendFuzzy(String currentUsername, String likeUsername) {
+        Query query = Query.empty();
+
+        query
+                .columns(Columns.from("username2"))
+                .and(new CriteriaDefinition() {
+                    @Override
+                    public ColumnName getColumnName() {
+                        return ColumnName.from("username1");
+                    }
+
+                    @Override
+                    public Predicate getPredicate() {
+                        return new Predicate(Operators.EQ, currentUsername);
+                    }
+                })
+                .and(new CriteriaDefinition() {
+                    @Override
+                    public ColumnName getColumnName() {
+                        return ColumnName.from("username2");
+                    }
+
+                    @Override
+                    public Predicate getPredicate() {
+                        return new Predicate(Operators.LIKE, likeUsername);
+                    }
+                })
+                .sort(Sort.by("username2").ascending());
+
+
+        return cassandraTemplate.select(query, String.class);
     }
 }

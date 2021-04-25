@@ -12,9 +12,7 @@ public interface FriendService {
 
     List<UserAccountDto> getFriendList(String username);
 
-    UserAccountDto searchUsername(String username);
-
-    List<UserAccountDto> searchFriendFuzzy(String likeUsername);
+    List<UserAccountDto> searchFriendFuzzy(String currentUsername, String likeUsername);
 
 
 }
