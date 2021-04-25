@@ -4,6 +4,7 @@ import com.csse433.blackboard.auth.dto.UserAccountDto;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author chetzhang
@@ -89,4 +90,11 @@ public interface AuthService {
      * @return whether the password meets conditions
      */
     boolean checkPasswordConditions(String password);
+
+    /**
+     * Get user from username
+     * @param username
+     * @return
+     */
+    UserAccountDto getUserFromUsername(String username);
 }
