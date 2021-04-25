@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author chetzhang
@@ -66,7 +67,7 @@ public class FriendServiceImpl implements FriendService {
             return Collections.emptyList();
         }
         List<String> friendUsernames = friendDao.getFriendList(username);
-        return null;
+        return friendUsernames.stream().map(friendUsername -> authService.getUserFromUsername(friendUsername)).collect(Collectors.toList());
     }
 
     @Override
