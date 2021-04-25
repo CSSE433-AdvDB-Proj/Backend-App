@@ -17,6 +17,16 @@ public enum MessageTypeEnum {
     /**
      * Group invitation.
      */
-    GROUP_INVITATION;
+    GROUP_INVITATION,
+
+    /**
+     * Accept an invitation.
+     */
+    FRIEND_REQUEST_ACCEPTED,
+
+    /**
+     * Reject an invitation.
+     */
+    FRIEND_REQUEST_REJECTED;
 
 }

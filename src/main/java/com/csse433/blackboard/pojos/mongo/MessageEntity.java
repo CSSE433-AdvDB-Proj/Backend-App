@@ -41,4 +41,8 @@ public class MessageEntity {
      */
     private String content;
 
+    /**
+     * Message type.
+     */
+    private String messageType;
 }

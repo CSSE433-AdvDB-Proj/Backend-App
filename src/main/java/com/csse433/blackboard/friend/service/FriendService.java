@@ -11,7 +11,7 @@ public interface FriendService {
 
     NotifyMessageVo generateFriendNotifyMessage(String fromUsername, long timestamp);
 
-    void friendRequestResponse(String fromUsername, String toUsername);
+    void friendRequestResponse(String fromUsername, String toUsername, boolean accepted);
 
     List<UserAccountDto> getFriendList(String username);
 

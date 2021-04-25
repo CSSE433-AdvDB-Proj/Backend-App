@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +32,9 @@ public class FriendServiceImpl implements FriendService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    private MessageService messageService;
+
     @Override
     public void sendFriendRequest(String fromUsername, String toUsername) {
         if (authService.userExists(fromUsername, toUsername) != null) {
@@ -44,6 +46,7 @@ public class FriendServiceImpl implements FriendService {
         Date date = new Date();
         NotifyMessageVo notifyMessageVo = generateFriendNotifyMessage(fromUsername, date.getTime());
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
+        //TODO: 存储invitation
     }
 
     @Override
@@ -57,8 +60,17 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void friendRequestResponse(String fromUsername, String toUsername) {
-        friendDao.createNewRelation(fromUsername, toUsername, RelationTypeEnum.FRIEND, new Date());
+    public void friendRequestResponse(String fromUsername, String toUsername, boolean accepted) {
+        if(accepted){
+            friendDao.createNewRelation(fromUsername, toUsername, RelationTypeEnum.FRIEND, new Date());
+        }
+        NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
+        long now = System.currentTimeMillis();
+        notifyMessageVo.setTimestamp(now);
+        notifyMessageVo.setChatId(fromUsername);
+        notifyMessageVo.setType(accepted ? MessageTypeEnum.FRIEND_REQUEST_ACCEPTED : MessageTypeEnum.FRIEND_REQUEST_REJECTED);
+        messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
+        messageService.insertFriendRequestResponse(fromUsername, toUsername, accepted, now);
     }
 
     @Override

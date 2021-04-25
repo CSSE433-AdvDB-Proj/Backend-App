@@ -56,6 +56,11 @@ public class MessageServiceImpl implements MessageService {
         return messageDao.getOfflineMessage(userAccountDto).stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
     }
 
+    @Override
+    public void insertFriendRequestResponse(String fromUsername, String toUsername, boolean accepted, long now) {
+        //TODO: Mongodb.blackboard.message添加messageType 那个Enum
+    }
+
 
     @Override
     public void insertMessage(InboundMessageDto inboundMessageDto, long timestamp) {
@@ -64,6 +69,10 @@ public class MessageServiceImpl implements MessageService {
         entity.setFrom(inboundMessageDto.getFrom());
         entity.setTo(inboundMessageDto.getTo());
         entity.setContent(inboundMessageDto.getContent());
+        entity.setMessageType(MessageTypeEnum.MESSAGE.name());
         messageMongoService.insert(entity);
     }
+
+
+
 }

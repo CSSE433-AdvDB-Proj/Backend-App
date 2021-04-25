@@ -2,6 +2,8 @@ package com.csse433.blackboard.message.dao;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.Constants;
+import com.csse433.blackboard.common.MessageTypeEnum;
+import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
@@ -36,6 +38,7 @@ public class MessageDao {
     public List<OutboundMessageVo> getMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
         Query query = new Query();
         query
+                .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE.name()))
                 .addCriteria(Criteria.where("timestamp").is(dto.getTimestamp()))
                 .addCriteria(Criteria.where("from").is(dto.getChatId()))
                 .addCriteria(Criteria.where("to").is(userAccountDto.getUsername()));
