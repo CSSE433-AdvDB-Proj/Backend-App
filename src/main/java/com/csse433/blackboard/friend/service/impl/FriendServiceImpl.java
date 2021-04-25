@@ -1,7 +1,9 @@
 package com.csse433.blackboard.friend.service.impl;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.friend.service.FriendService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.List;
  */
 @Service
 public class FriendServiceImpl implements FriendService {
+
+    @Autowired
+    private AuthService authService;
 
     @Override
     public void sendFriendRequest(String fromUsername, String toUsername) {
@@ -24,6 +29,7 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<UserAccountDto> getFriendList(String username) {
+
         return null;
     }
 
