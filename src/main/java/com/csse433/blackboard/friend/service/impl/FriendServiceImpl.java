@@ -14,12 +14,12 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void sendFriendRequest(String fromUsername, String toUsername) {
-
+        //TODO: Henry
     }
 
     @Override
     public void friendRequestResponse(String fromUsername, String toUsername) {
-
+        //TODO: Henry
     }
 
     @Override
