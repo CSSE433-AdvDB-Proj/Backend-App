@@ -34,10 +34,10 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<UserAccountDto> getFriendList(String username) {
-        if (authService.userExists(username) == null) {
+        if (authService.userExists(username) != null) {
             return Collections.emptyList();
         }
-
+        List<String> friendUsernames = friendDao.getFriendList(username);
         return null;
     }
 
