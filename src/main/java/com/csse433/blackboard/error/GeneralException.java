@@ -20,5 +20,11 @@ public class GeneralException extends RuntimeException{
     }
 
 
+    public static GeneralException ofUserNotFoundException(String username) {
+        return new GeneralException("User not found: " + username);
+    }
 
+    public static GeneralException ofRepeatFriendRequestException(String toUsername) {
+        return new GeneralException("You have already became a friend with: " + toUsername + ".");
+    }
 }

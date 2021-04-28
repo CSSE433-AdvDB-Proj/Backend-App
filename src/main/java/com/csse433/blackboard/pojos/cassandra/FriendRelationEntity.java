@@ -6,6 +6,8 @@ import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -22,8 +24,7 @@ public class FriendRelationEntity {
     private String username2;
 
     @Column("gmt_create")
-    private Date gmtCreate;
-    //TODO: Change to com.datastax.driver.core.LocalDate
+    private LocalDateTime gmtCreate;
 
     @Column("relation")
     private RelationTypeEnum relation;

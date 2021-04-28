@@ -5,10 +5,12 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.common.RelationTypeEnum;
+import com.csse433.blackboard.error.GeneralException;
 import com.csse433.blackboard.friend.dao.FriendDao;
 import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
+import com.sun.tools.javah.Gen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -37,16 +39,16 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void sendFriendRequest(String fromUsername, String toUsername) {
-        if (authService.userExists(fromUsername, toUsername) != null) {
-            return; // TODO: user not found
+        if (authService.userExists(toUsername) != null) {
+            throw GeneralException.ofUserNotFoundException(toUsername);
         }
         if (friendDao.findUserRelation(fromUsername, toUsername) != null) {
-            return; // TODO: already in relation
+            throw GeneralException.ofRepeatFriendRequestException(toUsername);
         }
         Date date = new Date();
         NotifyMessageVo notifyMessageVo = generateFriendNotifyMessage(fromUsername, date.getTime());
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
-        messageService.insertFriendInvitation(fromUsername, toUsername, System.currentTimeMillis());
+        messageService.insertFriendInvitation(fromUsername, toUsername, date.getTime());
     }
 
     @Override
