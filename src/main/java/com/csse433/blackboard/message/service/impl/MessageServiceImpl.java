@@ -58,9 +58,25 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void insertFriendRequestResponse(String fromUsername, String toUsername, boolean accepted, long now) {
-        //TODO: Mongodb.blackboard.message添加messageType 那个Enum
+        MessageEntity entity = new MessageEntity();
+        entity.setTimestamp(now);
+        entity.setFrom(fromUsername);
+        entity.setTo(toUsername);
+        entity.setContent("");
+        entity.setMessageType(accepted ? MessageTypeEnum.FRIEND_REQUEST_ACCEPTED.name() : MessageTypeEnum.FRIEND_REQUEST_REJECTED.name());
+        messageMongoService.insert(entity);
     }
 
+    @Override
+    public void insertFriendInvitation(String fromUsername, String toUsername, long now) {
+        MessageEntity entity = new MessageEntity();
+        entity.setTimestamp(now);
+        entity.setFrom(fromUsername);
+        entity.setTo(toUsername);
+        entity.setContent("");
+        entity.setMessageType(MessageTypeEnum.FRIEND_REQUEST.name());
+        messageMongoService.insert(entity);
+    }
 
     @Override
     public void insertMessage(InboundMessageDto inboundMessageDto, long timestamp) {
