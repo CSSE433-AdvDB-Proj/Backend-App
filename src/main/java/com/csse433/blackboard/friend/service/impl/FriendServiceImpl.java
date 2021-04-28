@@ -46,7 +46,7 @@ public class FriendServiceImpl implements FriendService {
         Date date = new Date();
         NotifyMessageVo notifyMessageVo = generateFriendNotifyMessage(fromUsername, date.getTime());
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
-        //TODO: 存储invitation
+        messageService.insertFriendInvitation(fromUsername, toUsername, System.currentTimeMillis());
     }
 
     @Override

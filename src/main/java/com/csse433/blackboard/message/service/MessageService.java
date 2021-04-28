@@ -25,4 +25,6 @@ public interface MessageService {
     Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto);
 
     void insertFriendRequestResponse(String fromUsername, String toUsername, boolean accepted, long now);
+
+    void insertFriendInvitation(String fromUsername, String toUsername, long now);
 }
