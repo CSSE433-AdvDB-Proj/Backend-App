@@ -23,6 +23,7 @@ public class FriendRelationEntity {
 
     @Column("gmt_create")
     private Date gmtCreate;
+    //TODO: Change to com.datastax.driver.core.LocalDate
 
     @Column("relation")
     private RelationTypeEnum relation;

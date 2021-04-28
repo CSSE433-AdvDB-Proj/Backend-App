@@ -25,7 +25,7 @@ public class FriendDao {
     private CassandraTemplate cassandraTemplate;
 
     public RelationTypeEnum findUserRelation(String fromUsername, String toUsername) {
-        String cql = String.format("SELECT * FROM blackboard.friend WHERE username1 = '%s' and username2 = '%s';", fromUsername, toUsername);
+        String cql = String.format("SELECT * FROM blackboard.friend WHERE username1 = '%s' and username2 = '%s' ALLOW FILTERING;", fromUsername, toUsername);
         FriendRelationEntity friendRelationEntity = cassandraTemplate.selectOne(cql, FriendRelationEntity.class);
         return friendRelationEntity == null ? null : friendRelationEntity.getRelation();
     }
