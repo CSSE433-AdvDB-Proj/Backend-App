@@ -56,6 +56,7 @@ public class AuthController {
     public Result<?> login(@RequestBody UserAccountDto userAccountDto, HttpServletResponse response){
         String username = userAccountDto.getUsername();
         String password = userAccountDto.getPassword();
+        System.out.println("Login called");
         if(StringUtils.isBlank(username) || StringUtils.isBlank(password)){
             return Result.fail("Please provide credentials.");
         }

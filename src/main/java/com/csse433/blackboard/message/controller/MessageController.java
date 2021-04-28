@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping(value = "/message")
-@CrossOrigin(originPatterns = "*", exposedHeaders = {"Blackboard-Token"}, allowedHeaders = {"Blackboard-Token"})
+//@CrossOrigin(originPatterns = "*", exposedHeaders = {"Blackboard-Token"}, allowedHeaders = {"Blackboard-Token"})
 public class MessageController {
 
     @Autowired
