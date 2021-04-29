@@ -4,17 +4,15 @@ public enum RelationTypeEnum {
     /**
      * Is friend.
      */
-    FRIEND("1"),
+    FRIEND,
+
+    /**
+     * Friend request is sent, but no response yet.
+     */
+    FRIEND_REQUESTING,
 
     /**
      * Is blacklisted.
      */
-    BLACKLISTED("2");
-
-    String data;
-
-
-    RelationTypeEnum(String data) {
-        this.data = data;
-    }
+    BLACKLISTED;
 }

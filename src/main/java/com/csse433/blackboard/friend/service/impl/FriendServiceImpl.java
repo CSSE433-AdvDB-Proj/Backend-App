@@ -10,7 +10,6 @@ import com.csse433.blackboard.friend.dao.FriendDao;
 import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
-import com.sun.tools.javah.Gen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -42,12 +41,17 @@ public class FriendServiceImpl implements FriendService {
         if (authService.userExists(toUsername) != null) {
             throw GeneralException.ofUserNotFoundException(toUsername);
         }
-        if (friendDao.findUserRelation(fromUsername, toUsername) != null) {
-            throw GeneralException.ofRepeatFriendRequestException(toUsername);
+        RelationTypeEnum userRelation = friendDao.findUserRelation(fromUsername, toUsername);
+        if (userRelation != null) {
+            throw GeneralException.ofRepeatFriendRequestException(userRelation, toUsername);
         }
         Date date = new Date();
         NotifyMessageVo notifyMessageVo = generateFriendNotifyMessage(fromUsername, date.getTime());
+        //Add friend request pending relationships for both users.
+        friendDao.addFriendRequestAppendingStatus(fromUsername, toUsername);
+        //Send to websocket.
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
+        //Store message to Mongo.
         messageService.insertFriendInvitation(fromUsername, toUsername, date.getTime());
     }
 
@@ -63,16 +67,21 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void friendRequestResponse(String fromUsername, String toUsername, boolean accepted) {
+        if (authService.userExists(toUsername) != null) {
+            throw GeneralException.ofUserNotFoundException(toUsername);
+        }
+        Date now = new Date();
+        friendDao.removeRequestingRelation(fromUsername, toUsername);
         if(accepted){
-            friendDao.createNewRelation(fromUsername, toUsername, RelationTypeEnum.FRIEND, new Date());
+            friendDao.createFriendRelation(fromUsername, toUsername);
         }
         NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
-        long now = System.currentTimeMillis();
-        notifyMessageVo.setTimestamp(now);
+
+        notifyMessageVo.setTimestamp(now.getTime());
         notifyMessageVo.setChatId(fromUsername);
         notifyMessageVo.setType(accepted ? MessageTypeEnum.FRIEND_REQUEST_ACCEPTED : MessageTypeEnum.FRIEND_REQUEST_REJECTED);
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
-        messageService.insertFriendRequestResponse(fromUsername, toUsername, accepted, now);
+        messageService.insertFriendRequestResponse(fromUsername, toUsername, accepted, now.getTime());
     }
 
     @Override
