@@ -1,22 +1,17 @@
 package com.csse433.blackboard.message.controller;
 
-import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
-import com.csse433.blackboard.common.Result;
-import com.csse433.blackboard.message.service.MessageService;
+import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
-
+import com.csse433.blackboard.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 
@@ -34,21 +29,22 @@ public class WebSocketController {
     private MessageService messageService;
 
     @Autowired
-    private AuthService authService;
+    private FriendService friendService;
 
-    @ResponseBody
-    @GetMapping("/friend/addFriend")
-    public Result<?> sendFriendRequest(@RequestParam String username, UserAccountDto userAccountDto){
-        //TODO: addFriendRequest
-//        messagingTemplate.convertAndSendToUser();
-        return Result.success();
-    }
+    @Autowired
+    private AuthService authService;
 
     @MessageMapping("/toUser")
     public void toUser(InboundMessageDto inboundMessageDto)  {
 
         Date date = new Date();
-        String invalidUsername = authService.userExists(inboundMessageDto.getFrom(), inboundMessageDto.getTo());
+        String fromUser = inboundMessageDto.getFrom();
+        String toUser = inboundMessageDto.getTo();
+        String invalidUsername = authService.userExists(fromUser, toUser);
+        if (!friendService.isFriend(fromUser, toUser)) {
+            log.info(fromUser + " is trying to send messages to " + toUser + " who is not one of his/her friends.");
+            return;
+        }
         if(StringUtils.isNotBlank(invalidUsername)){
             log.info("User not found: " + invalidUsername);
             return;
@@ -56,7 +52,7 @@ public class WebSocketController {
 
         messageService.insertMessage(inboundMessageDto, date.getTime());
         NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
-        messagingTemplate.convertAndSendToUser(inboundMessageDto.getTo(), Constants.PERSONAL_CHAT, notifyMessageVo);
+        messagingTemplate.convertAndSendToUser(toUser, Constants.PERSONAL_CHAT, notifyMessageVo);
     }
 
 

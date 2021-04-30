@@ -5,6 +5,7 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.common.RelationTypeEnum;
+import com.csse433.blackboard.error.GeneralException;
 import com.csse433.blackboard.friend.dao.FriendDao;
 import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
@@ -37,16 +38,21 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void sendFriendRequest(String fromUsername, String toUsername) {
-        if (authService.userExists(fromUsername, toUsername) != null) {
-            return; // TODO: user not found
+        if (authService.userExists(toUsername) != null) {
+            throw GeneralException.ofUserNotFoundException(toUsername);
         }
-        if (friendDao.findUserRelation(fromUsername, toUsername) != null) {
-            return; // TODO: already in relation
+        RelationTypeEnum userRelation = friendDao.findUserRelation(fromUsername, toUsername);
+        if (userRelation != null) {
+            throw GeneralException.ofRepeatFriendRequestException(userRelation, toUsername);
         }
         Date date = new Date();
         NotifyMessageVo notifyMessageVo = generateFriendNotifyMessage(fromUsername, date.getTime());
+        //Add friend request pending relationships for both users.
+        friendDao.addFriendRequestAppendingStatus(fromUsername, toUsername);
+        //Send to websocket.
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
-        messageService.insertFriendInvitation(fromUsername, toUsername, System.currentTimeMillis());
+        //Store message to Mongo.
+        messageService.insertFriendInvitation(fromUsername, toUsername, date.getTime());
     }
 
     @Override
@@ -61,16 +67,28 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void friendRequestResponse(String fromUsername, String toUsername, boolean accepted) {
+        //Check if the target user exists.
+        if (authService.userExists(toUsername) != null) {
+            throw GeneralException.ofUserNotFoundException(toUsername);
+        }
+        Date now = new Date();
+        //Check if the target user have sent friend request.
+        if (!friendDao.removeRequestingRelation(fromUsername, toUsername)) {
+            throw GeneralException.ofInvalidOperationException();
+        }
+        //Create friend relationship on acception.
         if(accepted){
-            friendDao.createNewRelation(fromUsername, toUsername, RelationTypeEnum.FRIEND, new Date());
+            friendDao.createFriendRelation(fromUsername, toUsername);
         }
         NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
-        long now = System.currentTimeMillis();
-        notifyMessageVo.setTimestamp(now);
+
+        notifyMessageVo.setTimestamp(now.getTime());
         notifyMessageVo.setChatId(fromUsername);
         notifyMessageVo.setType(accepted ? MessageTypeEnum.FRIEND_REQUEST_ACCEPTED : MessageTypeEnum.FRIEND_REQUEST_REJECTED);
+        //Notify target user.
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
-        messageService.insertFriendRequestResponse(fromUsername, toUsername, accepted, now);
+        //Log message.
+        messageService.insertFriendRequestResponse(fromUsername, toUsername, accepted, now.getTime());
     }
 
     @Override
@@ -83,5 +101,10 @@ public class FriendServiceImpl implements FriendService {
     public List<UserAccountDto> searchFriendFuzzy(String currentUsername, String likeUsername) {
         List<String> fuzzyFriendUsernames = friendDao.findFriendFuzzy(currentUsername, likeUsername);
         return fuzzyFriendUsernames.stream().map(friendUsername -> authService.getUserFromUsername(friendUsername)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isFriend(String username, String target) {
+        return friendDao.findUserRelation(username, target).equals(RelationTypeEnum.FRIEND);
     }
 }

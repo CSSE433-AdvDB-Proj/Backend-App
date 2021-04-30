@@ -51,4 +51,18 @@ public class AccountController {
         return authService.updateUserPassword(username, newPassword) ? Result.success() : Result.fail("Update password failed");
     }
 
+//    @PostMapping(value = "/change_password")
+//    public Result<?> changePassword(@RequestBody UserAccountDto userAccountDto,
+//                                    @RequestBody String newPassword) {
+//        if (!authService.checkPasswordConditions(newPassword)) {
+//            return Result.fail("New password does not meet conditions.");
+//        }
+//        String username = userAccountDto.getUsername();
+//        String password = userAccountDto.getPassword();
+//        if (!authService.verifyPassword(username, password)) {
+//            return Result.fail("Old password is incorrect.");
+//        }
+//        return authService.updateUserPassword(username, newPassword) ? Result.success() : Result.fail("Update password failed");
+//    }
+
 }
