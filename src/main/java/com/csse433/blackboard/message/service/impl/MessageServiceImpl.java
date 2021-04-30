@@ -2,6 +2,8 @@ package com.csse433.blackboard.message.service.impl;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.MessageTypeEnum;
+import com.csse433.blackboard.friend.service.FriendService;
+import com.csse433.blackboard.friend.service.impl.FriendServiceImpl;
 import com.csse433.blackboard.message.dao.MessageDao;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
@@ -30,6 +32,10 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private FriendService friendService;
+
+
     @Override
     public NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp) {
         NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
@@ -43,6 +49,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Map<String, List<OutboundMessageVo>> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
         List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
+        dtoList = dtoList.stream().filter(dto -> friendService.isFriend(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
         for (RetrieveMessageDto dto : dtoList) {
             outboundMessageVos.addAll(messageDao.getMessage(userAccountDto, dto));
         }

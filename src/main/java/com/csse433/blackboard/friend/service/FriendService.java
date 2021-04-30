@@ -46,4 +46,11 @@ public interface FriendService {
     List<UserAccountDto> searchFriendFuzzy(String currentUsername, String likeUsername);
 
 
+    /**
+     * Check if username and the target is friend.
+     * @param username
+     * @param target
+     * @return
+     */
+    boolean isFriend(String username, String target);
 }
