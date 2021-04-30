@@ -105,6 +105,6 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public boolean isFriend(String username, String target) {
-        return friendDao.findUserRelation(username, target).equals(RelationTypeEnum.FRIEND);
+        return RelationTypeEnum.FRIEND.equals(friendDao.findUserRelation(username, target));
     }
 }
