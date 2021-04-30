@@ -30,6 +30,7 @@ public class AccountController {
 
     @PostMapping(value = "/logout")
     public Result<?> logout(@RequestHeader(Constants.TOKEN_HEADER) String token) {
+        System.out.println("Logout called");
         authService.deleteToken(token);
         return Result.success();
     }
