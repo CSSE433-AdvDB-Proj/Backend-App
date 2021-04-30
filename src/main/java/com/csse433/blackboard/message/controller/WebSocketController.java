@@ -2,6 +2,7 @@ package com.csse433.blackboard.message.controller;
 
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
+import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
@@ -28,13 +29,22 @@ public class WebSocketController {
     private MessageService messageService;
 
     @Autowired
+    private FriendService friendService;
+
+    @Autowired
     private AuthService authService;
 
     @MessageMapping("/toUser")
     public void toUser(InboundMessageDto inboundMessageDto)  {
 
         Date date = new Date();
-        String invalidUsername = authService.userExists(inboundMessageDto.getFrom(), inboundMessageDto.getTo());
+        String fromUser = inboundMessageDto.getFrom();
+        String toUser = inboundMessageDto.getTo();
+        String invalidUsername = authService.userExists(fromUser, toUser);
+        if (!friendService.isFriend(fromUser, toUser)) {
+            log.info(fromUser + " is trying to send messages to " + toUser + " who is not one of his/her friends.");
+            return;
+        }
         if(StringUtils.isNotBlank(invalidUsername)){
             log.info("User not found: " + invalidUsername);
             return;
@@ -42,7 +52,7 @@ public class WebSocketController {
 
         messageService.insertMessage(inboundMessageDto, date.getTime());
         NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
-        messagingTemplate.convertAndSendToUser(inboundMessageDto.getTo(), Constants.PERSONAL_CHAT, notifyMessageVo);
+        messagingTemplate.convertAndSendToUser(toUser, Constants.PERSONAL_CHAT, notifyMessageVo);
     }
 
 
