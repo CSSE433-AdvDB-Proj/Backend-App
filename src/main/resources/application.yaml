@@ -14,3 +14,8 @@ server:
 global:
   db-usrnm: admin
   db-pswd: DidiHenryChet
+
+application:
+  config:
+    allow-no-friend-communication: true
+
