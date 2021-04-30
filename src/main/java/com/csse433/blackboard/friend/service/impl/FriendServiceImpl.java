@@ -67,11 +67,16 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void friendRequestResponse(String fromUsername, String toUsername, boolean accepted) {
+        //Check if the target user exists.
         if (authService.userExists(toUsername) != null) {
             throw GeneralException.ofUserNotFoundException(toUsername);
         }
         Date now = new Date();
-        friendDao.removeRequestingRelation(fromUsername, toUsername);
+        //Check if the target user have sent friend request.
+        if (!friendDao.removeRequestingRelation(fromUsername, toUsername)) {
+            throw GeneralException.ofInvalidOperationException();
+        }
+        //Create friend relationship on acception.
         if(accepted){
             friendDao.createFriendRelation(fromUsername, toUsername);
         }
@@ -80,7 +85,9 @@ public class FriendServiceImpl implements FriendService {
         notifyMessageVo.setTimestamp(now.getTime());
         notifyMessageVo.setChatId(fromUsername);
         notifyMessageVo.setType(accepted ? MessageTypeEnum.FRIEND_REQUEST_ACCEPTED : MessageTypeEnum.FRIEND_REQUEST_REJECTED);
+        //Notify target user.
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
+        //Log message.
         messageService.insertFriendRequestResponse(fromUsername, toUsername, accepted, now.getTime());
     }
 

@@ -34,4 +34,8 @@ public class GeneralException extends RuntimeException{
         }
         return new GeneralException("Friend request error!");
     }
+
+    public static GeneralException ofInvalidOperationException() {
+        return new GeneralException("Invalid Operation.");
+    }
 }

@@ -24,6 +24,14 @@ public class FriendDao {
     @Autowired
     private CassandraTemplate cassandraTemplate;
 
+    /**
+     * Find the user relation. A relation can be any of the {@code RelationTypeEnum}
+     * @param username1
+     * @param username2
+     * @return RelationTypeEnum, or null.
+     *
+     * @see RelationTypeEnum
+     */
     public RelationTypeEnum findUserRelation(String username1, String username2) {
         Query query = Query.empty();
         query = query
@@ -33,11 +41,21 @@ public class FriendDao {
         return friendRelationEntity == null ? null : friendRelationEntity.getRelation();
     }
 
+    /**
+     * Make both users as friends.
+     * @param fromUsername
+     * @param toUsername
+     */
     public void createFriendRelation(String fromUsername, String toUsername) {
         addFriendRelation(fromUsername, toUsername);
         addFriendRelation(toUsername, fromUsername);
     }
 
+    /**
+     * Add user2 as a friend of user1.
+     * @param username1Value
+     * @param username2Value
+     */
     private void addFriendRelation(String username1Value, String username2Value) {
         FriendRelationEntity friendRelationEntity = new FriendRelationEntity();
         friendRelationEntity.setUsername1(username1Value);
@@ -49,6 +67,11 @@ public class FriendDao {
         cassandraTemplate.insert(friendRelationEntity);
     }
 
+    /**
+     * Query a list of friend that matches the provided username.
+     * @param username
+     * @return
+     */
     public List<String> getFriendList(String username) {
         Query query = Query.empty();
 
@@ -62,6 +85,12 @@ public class FriendDao {
 
     }
 
+    /**
+     * Fuzzy search a list of friends that has username like the provided username.
+     * @param currentUsername
+     * @param likeUsername
+     * @return
+     */
     public List<String> findFriendFuzzy(String currentUsername, String likeUsername) {
         Query query = Query.empty();
 
@@ -77,6 +106,11 @@ public class FriendDao {
     }
 
 
+    /**
+     * Add user2 a pending friend of user1.
+     * @param fromUsername
+     * @param toUsername
+     */
     public void addFriendRequestAppendingStatus(String fromUsername, String toUsername) {
         FriendRelationEntity entity = new FriendRelationEntity();
         entity.setUsername1(fromUsername);
@@ -88,12 +122,18 @@ public class FriendDao {
 
     }
 
-    public void removeRequestingRelation(String fromUsername, String toUsername) {
+    /**
+     * Remove any relation from user1 to user2.
+     * @param fromUsername
+     * @param toUsername
+     * @return
+     */
+    public boolean removeRequestingRelation(String fromUsername, String toUsername) {
         Query query = Query
                 .empty()
                 .and(Criteria.where("username1").is(toUsername))
                 .and(Criteria.where("username2").is(fromUsername));
         log.info(query.toString());
-        cassandraTemplate.delete(query, FriendRelationEntity.class);
+        return cassandraTemplate.delete(query, FriendRelationEntity.class);
     }
 }
