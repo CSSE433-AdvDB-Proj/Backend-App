@@ -11,6 +11,7 @@ import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class FriendServiceImpl implements FriendService {
+
+    @Value("${application.config.allow-no-friend-communication}")
+    private boolean allowNoFriendCommunication;
 
     @Autowired
     private AuthService authService;
@@ -105,6 +109,6 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public boolean isFriend(String username, String target) {
-        return RelationTypeEnum.FRIEND.equals(friendDao.findUserRelation(username, target));
+        return allowNoFriendCommunication || RelationTypeEnum.FRIEND.equals(friendDao.findUserRelation(username, target));
     }
 }
