@@ -62,7 +62,7 @@ public class MessageDao {
         }
         Query query = new Query();
         query
-                .addCriteria(Criteria.where("timestamp").gte(timestamp))
+                .addCriteria(Criteria.where("timestamp").gt(timestamp))
                 .addCriteria(Criteria.where("to").is(userAccountDto.getUsername()));
         return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
             OutboundMessageVo out = new OutboundMessageVo();
