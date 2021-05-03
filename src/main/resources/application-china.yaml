@@ -6,7 +6,7 @@ spring:
   data:
     cassandra:
       keyspace-name: blackboard
-      contact-points: ${server-config.ip}
+      contact-points: ${server-config.cassandra-ip}
       port: 9042
       local-datacenter: datacenter1
       username: ${global.db-usrnm}
