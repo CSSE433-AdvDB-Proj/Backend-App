@@ -3,6 +3,7 @@ package com.csse433.blackboard.error;
 import com.csse433.blackboard.common.Result;
 import com.csse433.blackboard.error.GeneralException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,6 +18,12 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = GeneralException.class)
     public Result<?> generalExceptionHandler(Exception e){
+        log.info(e.getMessage(), e.getCause());
+        return Result.fail(e.getMessage());
+    }
+
+    @ExceptionHandler(value = MissingServletRequestParameterException.class)
+    public Result<?> missingParamHandler(Exception e) {
         log.info(e.getMessage(), e.getCause());
         return Result.fail(e.getMessage());
     }

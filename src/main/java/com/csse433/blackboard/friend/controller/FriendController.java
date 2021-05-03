@@ -41,4 +41,15 @@ public class FriendController {
         return Result.success();
     }
 
+    @GetMapping("/get_friends")
+    public Result<?> getFriendList(UserAccountDto userAccountDto) {
+        return Result.success(friendService.getFriendList(userAccountDto.getUsername()));
+    }
+
+    @GetMapping("/search_friend")
+    public Result<?> searchFriend(UserAccountDto userAccountDto,
+                                  @RequestParam String likeUsername) {
+        return Result.success(friendService.searchFriendFuzzy(userAccountDto.getUsername(), likeUsername));
+    }
+
 }
