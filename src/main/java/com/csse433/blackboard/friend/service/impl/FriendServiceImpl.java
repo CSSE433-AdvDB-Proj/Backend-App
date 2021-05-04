@@ -42,6 +42,9 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void sendFriendRequest(String fromUsername, String toUsername) {
+        if(fromUsername.equals(toUsername)) {
+            throw GeneralException.ofSameUsernameFriendRequestException();
+        }
         if (authService.userExists(toUsername) != null) {
             throw GeneralException.ofUserNotFoundException(toUsername);
         }

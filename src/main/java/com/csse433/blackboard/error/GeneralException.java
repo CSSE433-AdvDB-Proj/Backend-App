@@ -25,6 +25,10 @@ public class GeneralException extends RuntimeException{
         return new GeneralException("User not found: " + username);
     }
 
+    public static GeneralException ofSameUsernameFriendRequestException() {
+        return new GeneralException("You cannot add yourself as friend");
+    }
+
     public static GeneralException ofRepeatFriendRequestException(RelationTypeEnum userRelation, String toUsername) {
         log.info(userRelation.name() + " " + toUsername);
         if(userRelation.equals(RelationTypeEnum.FRIEND)){
