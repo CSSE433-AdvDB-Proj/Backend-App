@@ -78,7 +78,7 @@ public class MessageDao {
         String username = userAccountDto.getUsername();
         Query query = new Query();
         query
-                .addCriteria(Criteria.where("timestamp").lte(timestamp))
+                .addCriteria(Criteria.where("timestamp").lt(timestamp))
                 .addCriteria(Criteria.where("from").is(from))
                 .addCriteria(Criteria.where("to").is(username))
                 .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE))
