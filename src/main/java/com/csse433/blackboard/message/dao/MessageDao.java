@@ -10,6 +10,7 @@ import com.csse433.blackboard.pojos.mongo.MessageEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -82,6 +83,7 @@ public class MessageDao {
                 .addCriteria(Criteria.where("from").is(from))
                 .addCriteria(Criteria.where("to").is(username))
                 .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE))
+                .with(Sort.by(Sort.Direction.DESC, "timestamp"))
                 .limit(count);
         return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
             OutboundMessageVo out = new OutboundMessageVo();
