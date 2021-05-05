@@ -4,16 +4,11 @@ import com.csse433.blackboard.auth.dao.AuthDao;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
-import com.csse433.blackboard.error.GeneralException;
 import com.csse433.blackboard.pojos.cassandra.UserEntity;
 import com.csse433.blackboard.util.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.cassandra.core.query.ColumnName;
-import org.springframework.data.cassandra.core.query.CriteriaDefinition;
-import org.springframework.data.cassandra.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 

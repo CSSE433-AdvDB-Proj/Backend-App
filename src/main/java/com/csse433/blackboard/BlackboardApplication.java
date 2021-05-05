@@ -1,10 +1,12 @@
 package com.csse433.blackboard;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
+@MapperScan("com.csse433.blackboard.rdbms.mapper")
 public class BlackboardApplication {
 
     public static void main(String[] args) {

@@ -6,7 +6,7 @@ spring:
   data:
     cassandra:
       keyspace-name: blackboard
-      contact-points: ${server-config.cassandra-ip}
+      contact-points: ${server-config.ip}
       port: 9042
       local-datacenter: datacenter1
       username: ${global.db-usrnm}
@@ -24,3 +24,9 @@ spring:
     host: ${server-config.ip}
     port: 6379
     password: ${global.db-pswd}
+
+  datasource:
+    username: root
+    password: rootroot
+    url: jdbc:mysql://localhost:3306/blackboard?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
