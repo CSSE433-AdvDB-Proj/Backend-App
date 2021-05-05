@@ -73,4 +73,22 @@ public class MessageDao {
                 .collect(Collectors.toList());
 
     }
+
+    public List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long timestamp) {
+        String username = userAccountDto.getUsername();
+        Query query = new Query();
+        query
+                .addCriteria(Criteria.where("timestamp").lte(timestamp))
+                .addCriteria(Criteria.where("from").is(from))
+                .addCriteria(Criteria.where("to").is(username))
+                .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE))
+                .limit(count);
+        return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
+            OutboundMessageVo out = new OutboundMessageVo();
+            BeanUtils.copyProperties(in, out);
+            return out;
+        })
+                .collect(Collectors.toList());
+
+    }
 }

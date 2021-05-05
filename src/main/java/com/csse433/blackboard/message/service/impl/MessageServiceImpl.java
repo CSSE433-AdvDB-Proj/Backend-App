@@ -64,6 +64,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long fromTimestamp) {
+        return messageDao.getHistoryMessage(userAccountDto, from, count, fromTimestamp);
+    }
+
+    @Override
     public void insertFriendRequestResponse(String fromUsername, String toUsername, boolean accepted, long now) {
         MessageEntity entity = new MessageEntity();
         entity.setTimestamp(now);

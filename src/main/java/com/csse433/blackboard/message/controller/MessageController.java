@@ -37,4 +37,16 @@ public class MessageController {
         return Result.success(messageService.getOfflineMessage(userAccountDto));
     }
 
+    @GetMapping("/history_message")
+    public Result<?> getHistoryMessage(UserAccountDto userAccountDto,
+                                       @RequestParam int messageCount,
+                                       @RequestParam String from,
+                                       @RequestParam(required = false) Long fromTimestamp) {
+        return Result.success(messageService.getHistoryMessage(
+                userAccountDto,
+                from,
+                messageCount,
+                fromTimestamp == null ? System.currentTimeMillis() : fromTimestamp));
+    }
+
 }
