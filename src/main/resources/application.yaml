@@ -18,6 +18,7 @@ global:
 application:
   config:
     allow-no-friend-communication: true
+    show-detailed-error-message: true
 
 mybatis-plus:
   mapper-locations: classpath:/**/*Mapper.xml
