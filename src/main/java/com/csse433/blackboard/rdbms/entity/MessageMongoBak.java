@@ -21,12 +21,16 @@ public class MessageMongoBak implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField("content")
     private String content;
 
+    @TableField("`from`")
     private String from;
 
+    @TableField("timestamp")
     private Long timestamp;
 
+    @TableField("`to`")
     private String to;
 
     @TableField("messageType")

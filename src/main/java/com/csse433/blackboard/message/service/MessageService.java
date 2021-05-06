@@ -29,4 +29,6 @@ public interface MessageService {
     void insertFriendRequestResponse(String fromUsername, String toUsername, boolean accepted, long now);
 
     void insertFriendInvitation(String fromUsername, String toUsername, long now);
+
+    void flushTempMessage();
 }

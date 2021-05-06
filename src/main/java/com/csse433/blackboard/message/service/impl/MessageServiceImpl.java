@@ -1,5 +1,6 @@
 package com.csse433.blackboard.message.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.friend.service.FriendService;
@@ -12,6 +13,8 @@ import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
+import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
+import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,6 +37,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private FriendService friendService;
+
+    @Autowired
+    private IMessageMongoBakService messageBakService;
 
 
     @Override
@@ -88,6 +94,16 @@ public class MessageServiceImpl implements MessageService {
         entity.setContent("");
         entity.setMessageType(MessageTypeEnum.FRIEND_REQUEST.name());
         messageMongoService.insert(entity);
+    }
+
+    @Override
+    public void flushTempMessage() {
+        int count = messageBakService.checkNeedToFlush();
+        if(count != 0){
+            //TODO: 改成循环分批刷入Mongo
+
+
+        }
     }
 
     @Override

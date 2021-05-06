@@ -6,14 +6,17 @@ import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
+import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.Date;
+import java.util.concurrent.*;
 
 /**
  * @author chetzhang
@@ -21,6 +24,11 @@ import java.util.Date;
 @Controller
 @Slf4j
 public class WebSocketController {
+
+    private final static ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
+            0L, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>());
+
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -33,6 +41,9 @@ public class WebSocketController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private IMessageMongoBakService messageBakService;
 
     @MessageMapping("/toUser")
     public void toUser(InboundMessageDto inboundMessageDto)  {
@@ -50,7 +61,15 @@ public class WebSocketController {
             return;
         }
 
-        messageService.insertMessage(inboundMessageDto, date.getTime());
+
+        try {
+            messageService.insertMessage(inboundMessageDto, date.getTime());
+            executor.execute(() -> messageService.flushTempMessage());
+
+        } catch (DataAccessResourceFailureException e){
+            messageBakService.insertTempMessage(inboundMessageDto, date.getTime());
+            e.printStackTrace();
+        }
         NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
         messagingTemplate.convertAndSendToUser(toUser, Constants.PERSONAL_CHAT, notifyMessageVo);
     }

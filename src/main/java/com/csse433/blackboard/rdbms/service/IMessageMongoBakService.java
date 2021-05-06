@@ -1,5 +1,6 @@
 package com.csse433.blackboard.rdbms.service;
 
+import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,4 +18,8 @@ public interface IMessageMongoBakService extends IService<MessageMongoBak> {
 
 
     List<String> getHenry(String name);
+
+    void insertTempMessage(InboundMessageDto inboundMessageDto, long time);
+
+    int checkNeedToFlush();
 }

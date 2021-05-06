@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: china
+  data:
+    mongodb:
+      database:
 
 server:
   servlet:
@@ -17,8 +20,11 @@ global:
 
 application:
   config:
+    # Turn this on to allow users to communicate to one another without being mutual friends.
     allow-no-friend-communication: true
+    # Turn this on to see error messages in the frontend/Postman.
     show-detailed-error-message: true
 
 mybatis-plus:
   mapper-locations: classpath:/**/*Mapper.xml
+
