@@ -74,7 +74,7 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void friendRequestResponse(String fromUsername, String toUsername, boolean accepted) {
-        //TODO: bugs
+        //TODO: 不够健壮
         //Check if the target user exists.
         if (authService.userExists(toUsername) != null) {
             throw GeneralException.ofUserNotFoundException(toUsername);
