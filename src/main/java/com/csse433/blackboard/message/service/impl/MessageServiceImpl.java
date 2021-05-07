@@ -97,6 +97,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public void insertGroupInvitation(String fromUsername, String toUsername, long now) {
+        MessageEntity entity = new MessageEntity();
+        entity.setTimestamp(now);
+        entity.setFrom(fromUsername);
+        entity.setTo(toUsername);
+        entity.setContent("");
+        entity.setMessageType(MessageTypeEnum.GROUP_INVITATION.name());
+        messageMongoService.insert(entity);
+    }
+
+    @Override
     public void flushTempMessage() {
         int count = messageBakService.checkNeedToFlush();
         if(count != 0){

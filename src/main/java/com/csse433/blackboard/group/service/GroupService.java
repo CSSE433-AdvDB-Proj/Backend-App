@@ -11,5 +11,5 @@ public interface GroupService {
 
     boolean userInGroup(String username, String groupId);
 
-    void inviteUserToGroup(String username, String groupId);
+    void inviteUserToGroup(String fromUsername, String toUsername, String groupId);
 }
