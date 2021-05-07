@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,13 +37,27 @@ public class MessageDao {
     private MongoTemplate mongoTemplate;
 
 
-    public List<OutboundMessageVo> getMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
+    public List<OutboundMessageVo> getPersonalMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
         Query query = new Query();
         query
                 .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE.name()))
                 .addCriteria(Criteria.where("timestamp").is(dto.getTimestamp()))
                 .addCriteria(Criteria.where("from").is(dto.getChatId()))
                 .addCriteria(Criteria.where("to").is(userAccountDto.getUsername()));
+        return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
+            OutboundMessageVo out = new OutboundMessageVo();
+            BeanUtils.copyProperties(in, out);
+            return out;
+
+        }).collect(Collectors.toList());
+    }
+
+    public List<OutboundMessageVo> getGroupMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
+        Query query = new Query();
+        query
+                .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE.name()))
+                .addCriteria(Criteria.where("timestamp").is(dto.getTimestamp()))
+                .addCriteria(Criteria.where("to").is(dto.getChatId()));
         return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
             OutboundMessageVo out = new OutboundMessageVo();
             BeanUtils.copyProperties(in, out);
@@ -94,4 +109,6 @@ public class MessageDao {
                 .collect(Collectors.toList());
 
     }
+
+
 }

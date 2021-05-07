@@ -11,11 +11,14 @@ import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
 import com.csse433.blackboard.pojos.cassandra.UserByGroupIdEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.query.Criteria;
+import org.springframework.data.cassandra.core.query.Query;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -59,5 +62,10 @@ public class GroupServiceImpl implements GroupService {
         //Store message to Mongo.
         Date date = new Date();
         messageService.insertGroupInvitation(fromUsername, toUsername, date.getTime());
+    }
+
+    @Override
+    public List<String> findUsersFromGroup(String groupId) {
+        return groupDao.findUsersFromGroup(groupId);
     }
 }

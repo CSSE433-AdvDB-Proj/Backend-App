@@ -8,16 +8,16 @@ import org.springframework.data.cassandra.core.mapping.Table;
 import java.time.LocalDateTime;
 
 @Data
-@Table("groupByGroupId")
+@Table("group_by_group_id")
 public class GroupEntity {
 
-    @PrimaryKey
+    @PrimaryKey("group_id")
     private String groupId;
 
-    @Column("groupName")
+    @Column("group_name")
     private String groupName;
 
-    @Column("createBy")
+    @Column("create_by")
     private String createBy;
 
     @Column("gmt_create")

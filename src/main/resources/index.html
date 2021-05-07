@@ -38,7 +38,7 @@
         //     });
         // }
 
-        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjIwMzE1NTc3LCJ1c2VybmFtZSI6ImNoYWl0ZXN0MSJ9.KV9pzDgY2pvTO9jlv947nZNNIASk8wYsDHr-t-FdL24"
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNjIwNDAzMTg0LCJ1c2VybmFtZSI6ImNoYWl0ZXN0MSJ9.CFiuPwvC9kr8iJ9v0rxZPaVm2nWja4zdjuxq-lRfPbU"
 
         function connect() {
             var socket = new SockJS("http://localhost:8080/blackboard/msg");
@@ -49,7 +49,7 @@
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
-                    '/user/' + document.getElementById('user').value + '/personal',
+                    '/user/' + document.getElementById('user').value + '/group',
                     function(response) {
 
                         console.log('received message!')
@@ -115,7 +115,7 @@
             const name = document.getElementById('name').value;
             const content = document.getElementById('content').value;
             console.info();
-            stompClient.send("/toUser", {}, JSON.stringify({
+            stompClient.send("/toGroup", {}, JSON.stringify({
                 'from': user,
                 'to': name,
                 'type': 'message',

@@ -20,7 +20,7 @@ public interface MessageService {
 
     NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp);
 
-    Map<String, List<OutboundMessageVo>> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
+    Map<String, List<OutboundMessageVo>> getPersonalMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
 
     Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto);
 
@@ -33,4 +33,8 @@ public interface MessageService {
     void insertGroupInvitation(String fromUsername, String toUsername, long now);
 
     void flushTempMessage();
+
+    NotifyMessageVo generateGroupNotifyMessage(InboundMessageDto inboundMessageDto, long time);
+
+    Map<String,List<OutboundMessageVo>> getGroupMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
 }

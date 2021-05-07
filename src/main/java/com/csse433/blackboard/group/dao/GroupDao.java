@@ -9,6 +9,8 @@ import org.springframework.data.cassandra.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class GroupDao {
@@ -41,15 +43,23 @@ public class GroupDao {
     public GroupEntity findGroupById(String groupId) {
         Query query = Query
                 .empty()
-                .and(Criteria.where("groupId").is(groupId));
+                .and(Criteria.where("group_id").is(groupId));
         return cassandraTemplate.selectOne(query, GroupEntity.class);
     }
 
     public UserByGroupIdEntity findUserInGroup(String username, String groupId) {
         Query query = Query
                 .empty()
-                .and(Criteria.where("groupId").is(groupId))
+                .and(Criteria.where("group_id").is(groupId))
                 .and(Criteria.where("username").is(username));
         return cassandraTemplate.selectOne(query, UserByGroupIdEntity.class);
+    }
+
+    public List<String> findUsersFromGroup(String groupId) {
+        Query query = Query
+                .empty()
+                .and(Criteria.where("group_id").is(groupId));
+        List<UserByGroupIdEntity> userByGroupIdEntities = cassandraTemplate.select(query, UserByGroupIdEntity.class);
+        return userByGroupIdEntities.stream().map(UserByGroupIdEntity::getUsername).collect(Collectors.toList());
     }
 }

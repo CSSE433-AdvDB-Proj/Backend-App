@@ -2,6 +2,8 @@ package com.csse433.blackboard.group.service;
 
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
 
+import java.util.List;
+
 public interface GroupService {
 
 
@@ -12,4 +14,6 @@ public interface GroupService {
     boolean userInGroup(String username, String groupId);
 
     void inviteUserToGroup(String fromUsername, String toUsername, String groupId);
+
+    List<String> findUsersFromGroup(String groupId);
 }

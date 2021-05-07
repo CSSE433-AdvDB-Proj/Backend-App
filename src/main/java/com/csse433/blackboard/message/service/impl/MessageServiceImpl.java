@@ -1,10 +1,9 @@
 package com.csse433.blackboard.message.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.friend.service.FriendService;
-import com.csse433.blackboard.friend.service.impl.FriendServiceImpl;
+import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.message.dao.MessageDao;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
@@ -13,11 +12,9 @@ import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
-import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -41,6 +38,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private IMessageMongoBakService messageBakService;
 
+    @Autowired
+    private GroupService groupService;
+
 
     @Override
     public NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp) {
@@ -53,14 +53,30 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Map<String, List<OutboundMessageVo>> getMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
+    public Map<String, List<OutboundMessageVo>> getPersonalMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
         List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
-        dtoList = dtoList.stream().filter(dto -> friendService.isFriend(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
-        for (RetrieveMessageDto dto : dtoList) {
-            outboundMessageVos.addAll(messageDao.getMessage(userAccountDto, dto));
+        if(dtoList != null){
+            dtoList = dtoList.stream().filter(dto -> friendService.isFriend(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
+            for (RetrieveMessageDto dto : dtoList) {
+                outboundMessageVos.addAll(messageDao.getPersonalMessage(userAccountDto, dto));
+            }
+            Optional<Long> max = outboundMessageVos.stream().map(OutboundMessageVo::getTimestamp).max(Long::compareTo);
+            max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
         }
-        Optional<Long> max = outboundMessageVos.stream().map(OutboundMessageVo::getTimestamp).max(Long::compareTo);
-        max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
+        return outboundMessageVos.stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
+    }
+
+    @Override
+    public Map<String, List<OutboundMessageVo>> getGroupMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
+        List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
+        if (dtoList != null) {
+            dtoList = dtoList.stream().filter(dto -> groupService.userInGroup(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
+            for (RetrieveMessageDto dto : dtoList) {
+                outboundMessageVos.addAll(messageDao.getGroupMessage(userAccountDto, dto));
+            }
+            Optional<Long> max = outboundMessageVos.stream().map(OutboundMessageVo::getTimestamp).max(Long::compareTo);
+            max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
+        }
         return outboundMessageVos.stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
     }
 
@@ -116,6 +132,18 @@ public class MessageServiceImpl implements MessageService {
 
         }
     }
+
+    @Override
+    public NotifyMessageVo generateGroupNotifyMessage(InboundMessageDto inboundMessageDto, long time) {
+        NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
+        notifyMessageVo.setTimestamp(time);
+        notifyMessageVo.setChatId(inboundMessageDto.getTo());
+        notifyMessageVo.setIsGroupChat(true);
+        notifyMessageVo.setType(MessageTypeEnum.MESSAGE);
+        return notifyMessageVo;
+    }
+
+
 
     @Override
     public void insertMessage(InboundMessageDto inboundMessageDto, long timestamp) {

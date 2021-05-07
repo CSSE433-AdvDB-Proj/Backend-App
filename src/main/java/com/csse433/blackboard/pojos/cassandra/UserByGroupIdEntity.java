@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
  * @author chetzhang
  */
 @Data
-@Table("userByGroupId")
+@Table("user_by_group_id")
 public class UserByGroupIdEntity {
 
-    @PrimaryKey
+    @PrimaryKey("group_id")
     private String groupId;
 
     @Column("username")

@@ -28,7 +28,10 @@ public class MessageController {
 
     @PostMapping("/getMessage")
     public Result<?> getMessage(@RequestBody List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
-        Map<String, List<OutboundMessageVo>> messageMap = messageService.getMessage(dtoList, userAccountDto);
+        Map<Boolean, List<RetrieveMessageDto>> mapByChatType = dtoList.stream().collect(Collectors.groupingBy(RetrieveMessageDto::getIsGroupChat));
+        Map<String, List<OutboundMessageVo>> messageMap = messageService.getPersonalMessage(mapByChatType.get(false), userAccountDto);
+        messageMap.putAll(messageService.getGroupMessage(mapByChatType.get(true), userAccountDto));
+
         return Result.success(messageMap);
     }
 

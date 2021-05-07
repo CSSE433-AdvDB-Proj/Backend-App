@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -47,7 +48,7 @@ public class WebSocketController {
     private IMessageMongoBakService messageBakService;
 
     @MessageMapping("/toUser")
-    public void toUser(InboundMessageDto inboundMessageDto)  {
+    public void toUser(InboundMessageDto inboundMessageDto) {
 
         Date date = new Date();
         String fromUser = inboundMessageDto.getFrom();
@@ -57,7 +58,7 @@ public class WebSocketController {
             log.info(fromUser + " is trying to send messages to " + toUser + " who is not one of his/her friends.");
             return;
         }
-        if(StringUtils.isNotBlank(invalidUsername)){
+        if (StringUtils.isNotBlank(invalidUsername)) {
             log.info("User not found: " + invalidUsername);
             return;
         }
@@ -67,7 +68,7 @@ public class WebSocketController {
             messageService.insertMessage(inboundMessageDto, date.getTime());
             executor.execute(() -> messageService.flushTempMessage());
 
-        } catch (DataAccessResourceFailureException e){
+        } catch (DataAccessResourceFailureException e) {
             messageBakService.insertTempMessage(inboundMessageDto, date.getTime());
             e.printStackTrace();
         }
@@ -90,7 +91,7 @@ public class WebSocketController {
             return;
         }
 
-        if(StringUtils.isNotBlank(invalidUsername)){
+        if (StringUtils.isNotBlank(invalidUsername)) {
             log.info("User not found: " + invalidUsername);
             return;
         }
@@ -100,15 +101,14 @@ public class WebSocketController {
             messageService.insertMessage(inboundMessageDto, date.getTime());
             executor.execute(() -> messageService.flushTempMessage());
 
-        } catch (DataAccessResourceFailureException e){
+        } catch (DataAccessResourceFailureException e) {
             messageBakService.insertTempMessage(inboundMessageDto, date.getTime());
             e.printStackTrace();
         }
-        NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
-        messagingTemplate.convertAndSendToUser(toGroup, Constants.GROUP_CHAT, notifyMessageVo);
+        NotifyMessageVo notifyMessageVo = messageService.generateGroupNotifyMessage(inboundMessageDto, date.getTime());
+        List<String> usernames = groupService.findUsersFromGroup(toGroup);
+        usernames.forEach(username -> messagingTemplate.convertAndSendToUser(username, Constants.GROUP_CHAT, notifyMessageVo));
     }
-
-
 
 
 }
