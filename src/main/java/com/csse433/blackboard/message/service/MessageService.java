@@ -30,5 +30,7 @@ public interface MessageService {
 
     void insertFriendInvitation(String fromUsername, String toUsername, long now);
 
+    void insertGroupInvitation(String fromUsername, String toUsername, long now);
+
     void flushTempMessage();
 }

@@ -45,7 +45,7 @@ public class GroupController {
         if(groupService.userInGroup(username, groupId)){
             return Result.fail("The user you invite is already in the group.");
         }
-        groupService.inviteUserToGroup(username, groupId);
+        groupService.inviteUserToGroup(userAccountDto.getUsername(), username, groupId);
 
         return Result.success();
     }
