@@ -60,9 +60,10 @@ public class GroupController {
         if(groupService.userInGroup(userAccountDto.getUsername(), groupId)){
             return Result.fail("Already in group.");
         }
+        //TODO: Respond to corresponding Cassandra record
         if (accepted) {
             groupService.addUserToGroup(userAccountDto.getUsername(), groupId);
-            //TODO Send accepted and rejected notifications
+            //TODO: Send accepted and rejected notifications
         }
         return Result.success();
     }

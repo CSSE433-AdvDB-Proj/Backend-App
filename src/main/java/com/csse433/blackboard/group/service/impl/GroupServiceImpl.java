@@ -62,6 +62,8 @@ public class GroupServiceImpl implements GroupService {
         //Store message to Mongo.
         Date date = new Date();
         messageService.insertGroupInvitation(fromUsername, toUsername, date.getTime());
+
+        //TODO: Generate a pending record in Cassandra.
     }
 
     @Override
