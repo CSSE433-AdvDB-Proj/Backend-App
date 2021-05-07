@@ -16,4 +16,6 @@ public interface GroupService {
     void inviteUserToGroup(String fromUsername, String toUsername, String groupId);
 
     List<String> findUsersFromGroup(String groupId);
+
+    void addUserToGroup(String username, String groupId);
 }

@@ -49,4 +49,21 @@ public class GroupController {
 
         return Result.success();
     }
+
+    @GetMapping("/respond")
+    public Result<?> respondToInvitation(UserAccountDto userAccountDto,
+                                         @RequestParam String groupId,
+                                         @RequestParam Boolean accepted) {
+        if(!groupService.existingGroup(groupId)){
+            return Result.fail("Group does not exist.");
+        }
+        if(groupService.userInGroup(userAccountDto.getUsername(), groupId)){
+            return Result.fail("Already in group.");
+        }
+        if (accepted) {
+            groupService.addUserToGroup(userAccountDto.getUsername(), groupId);
+            //TODO Send accepted and rejected notifications
+        }
+        return Result.success();
+    }
 }
