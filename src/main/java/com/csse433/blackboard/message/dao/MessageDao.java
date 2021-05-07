@@ -56,6 +56,7 @@ public class MessageDao {
     }
 
     public List<OutboundMessageVo> getOfflineMessage(UserAccountDto userAccountDto) {
+        //TODO: 查找自己所在的组
         String username = userAccountDto.getUsername();
         Long timestamp = (Long) redisTemplate.opsForHash().get(Constants.LAST_RETRIEVED_TIMESTAMP_REDIS_KEY, username);
         if (timestamp == null) {

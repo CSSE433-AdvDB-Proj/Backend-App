@@ -3,6 +3,7 @@ package com.csse433.blackboard.message.controller;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.friend.service.FriendService;
+import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
@@ -75,12 +76,36 @@ public class WebSocketController {
     }
 
 
+    @Autowired
+    private GroupService groupService;
 
     @MessageMapping("/toGroup")
     public void toGroup(InboundMessageDto inboundMessageDto) {
-        log.info(inboundMessageDto.toString());
-        messagingTemplate.convertAndSendToUser(inboundMessageDto.getTo(), Constants.GROUP_CHAT, inboundMessageDto.getContent());
-        // to: groupid or sth identifies group
+        Date date = new Date();
+        String fromUser = inboundMessageDto.getFrom();
+        String toGroup = inboundMessageDto.getTo();
+        String invalidUsername = authService.userExists(fromUser);
+        if (!groupService.existingGroup(toGroup)) {
+            log.info(fromUser + " is trying to send messages to " + toGroup + " which does not exist.");
+            return;
+        }
+
+        if(StringUtils.isNotBlank(invalidUsername)){
+            log.info("User not found: " + invalidUsername);
+            return;
+        }
+
+
+        try {
+            messageService.insertMessage(inboundMessageDto, date.getTime());
+            executor.execute(() -> messageService.flushTempMessage());
+
+        } catch (DataAccessResourceFailureException e){
+            messageBakService.insertTempMessage(inboundMessageDto, date.getTime());
+            e.printStackTrace();
+        }
+        NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
+        messagingTemplate.convertAndSendToUser(toGroup, Constants.GROUP_CHAT, notifyMessageVo);
     }
 
 
