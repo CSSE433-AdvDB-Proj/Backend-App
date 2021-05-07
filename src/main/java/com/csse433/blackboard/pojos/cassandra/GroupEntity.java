@@ -1,6 +1,5 @@
 package com.csse433.blackboard.pojos.cassandra;
 
-import com.csse433.blackboard.common.RelationTypeEnum;
 import lombok.Data;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -8,22 +7,20 @@ import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
-/**
- * @author chetzhang
- */
-@Table("friend")
 @Data
-public class FriendRelationEntity {
+@Table("groupByGroupId")
+public class GroupEntity {
 
-    @PrimaryKey("username1")
-    private String username1;
+    @PrimaryKey
+    private String groupId;
 
-    @Column("username2")
-    private String username2;
+    @Column("groupName")
+    private String groupName;
+
+    @Column("createBy")
+    private String createBy;
 
     @Column("gmt_create")
     private LocalDateTime gmtCreate;
 
-    @Column("relation")
-    private RelationTypeEnum relation;
 }
