@@ -68,4 +68,9 @@ public class GroupServiceImpl implements GroupService {
     public List<String> findUsersFromGroup(String groupId) {
         return groupDao.findUsersFromGroup(groupId);
     }
+
+    @Override
+    public void addUserToGroup(String username, String groupId) {
+        groupDao.addUserToGroup(groupId, username);
+    }
 }
