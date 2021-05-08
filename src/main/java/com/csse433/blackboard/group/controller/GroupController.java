@@ -52,6 +52,7 @@ public class GroupController {
 
     @GetMapping("/respond")
     public Result<?> respondToInvitation(UserAccountDto userAccountDto,
+                                         @RequestParam String inviter,
                                          @RequestParam String groupId,
                                          @RequestParam Boolean accepted) {
         if(!groupService.existingGroup(groupId)){
@@ -63,8 +64,8 @@ public class GroupController {
         //TODO: Respond to corresponding Cassandra record
         if (accepted) {
             groupService.addUserToGroup(userAccountDto.getUsername(), groupId);
-            //TODO: Send accepted and rejected notifications
         }
+        groupService.sendReponseNotifyMessage(userAccountDto.getUsername(), inviter, accepted);
         return Result.success();
     }
 }

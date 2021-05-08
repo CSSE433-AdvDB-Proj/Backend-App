@@ -20,6 +20,16 @@ public enum MessageTypeEnum {
     GROUP_INVITATION,
 
     /**
+     * Accept a group invitation.
+     */
+    GROUP_INVITATION_ACCEPTED,
+
+    /**
+     * Reject a group invitation.
+     */
+    GROUP_INVITATION_REJECTED,
+
+    /**
      * Accept an invitation.
      */
     FRIEND_REQUEST_ACCEPTED,

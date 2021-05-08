@@ -18,4 +18,6 @@ public interface GroupService {
     List<String> findUsersFromGroup(String groupId);
 
     void addUserToGroup(String username, String groupId);
+
+    void sendReponseNotifyMessage(String fromUsername, String toUsername, boolean accepted);
 }

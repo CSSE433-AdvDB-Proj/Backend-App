@@ -75,4 +75,14 @@ public class GroupServiceImpl implements GroupService {
     public void addUserToGroup(String username, String groupId) {
         groupDao.addUserToGroup(groupId, username);
     }
+
+    @Override
+    public void sendReponseNotifyMessage(String fromUsername, String toUsername, boolean accepted) {
+        NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
+        notifyMessageVo.setTimestamp(System.currentTimeMillis());
+        notifyMessageVo.setChatId(fromUsername);
+        notifyMessageVo.setIsGroupChat(false);
+        notifyMessageVo.setType(accepted ? MessageTypeEnum.GROUP_INVITATION_ACCEPTED : MessageTypeEnum.GROUP_INVITATION_REJECTED);
+        messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
+    }
 }
