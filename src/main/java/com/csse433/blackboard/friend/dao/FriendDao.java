@@ -141,6 +141,7 @@ public class FriendDao {
         entity.setFromUsername(fromUsername);
         entity.setToUsername(toUsername);
         entity.setIsFriendRequest(true);
+        entity.setGroupId("");
         entity.setGmtCreate(LocalDateTime.now());
         cassandraTemplate.insert(entity);
 
