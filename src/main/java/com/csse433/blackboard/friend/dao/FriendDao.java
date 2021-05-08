@@ -2,6 +2,8 @@ package com.csse433.blackboard.friend.dao;
 
 import com.csse433.blackboard.common.RelationTypeEnum;
 import com.csse433.blackboard.pojos.cassandra.FriendRelationEntity;
+import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
+import jnr.ffi.annotations.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraTemplate;
@@ -129,12 +131,19 @@ public class FriendDao {
      * @param toUsername
      */
     public void addFriendRequestAppendingStatus(String fromUsername, String toUsername) {
-        FriendRelationEntity entity = new FriendRelationEntity();
-        entity.setUsername1(fromUsername);
-        entity.setUsername2(toUsername);
-        entity.setGmtCreate(LocalDateTime.now());
-        entity.setRelation(RelationTypeEnum.FRIEND_REQUESTING);
+//        FriendRelationEntity entity = new FriendRelationEntity();
+//        entity.setUsername1(fromUsername);
+//        entity.setUsername2(toUsername);
+//        entity.setGmtCreate(LocalDateTime.now());
+//        entity.setRelation(RelationTypeEnum.FRIEND_REQUESTING);
+//
+//        cassandraTemplate.insert(entity);
 
+        InvitationEntity entity = new InvitationEntity();
+        entity.setFromUsername(fromUsername);
+        entity.setToUsername(toUsername);
+        entity.setIsFriendRequest(true);
+        entity.setGmtCreate(LocalDateTime.now());
         cassandraTemplate.insert(entity);
 
     }
@@ -147,12 +156,20 @@ public class FriendDao {
      * @return
      */
     public boolean removeRequestingRelation(String fromUsername, String toUsername) {
+//        Query query = Query
+//                .empty()
+//                .and(Criteria.where("username1").is(toUsername))
+//                .and(Criteria.where("username2").is(fromUsername));
+//        log.info(query.toString());
+//        return cassandraTemplate.delete(query, FriendRelationEntity.class);
+
         Query query = Query
                 .empty()
-                .and(Criteria.where("username1").is(toUsername))
-                .and(Criteria.where("username2").is(fromUsername));
+                .and(Criteria.where("to_username").is(fromUsername))
+                .and(Criteria.where("from_username").is(toUsername))
+                .and(Criteria.where("is_friend_request").is(true));
         log.info(query.toString());
-        return cassandraTemplate.delete(query, FriendRelationEntity.class);
+        return cassandraTemplate.delete(query, InvitationEntity.class);
     }
 
 }

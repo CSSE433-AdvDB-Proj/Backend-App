@@ -1,6 +1,7 @@
 package com.csse433.blackboard.group.dao;
 
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
+import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
 import com.csse433.blackboard.pojos.cassandra.UserByGroupIdEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraTemplate;
@@ -61,5 +62,25 @@ public class GroupDao {
                 .and(Criteria.where("group_id").is(groupId));
         List<UserByGroupIdEntity> userByGroupIdEntities = cassandraTemplate.select(query, UserByGroupIdEntity.class);
         return userByGroupIdEntities.stream().map(UserByGroupIdEntity::getUsername).collect(Collectors.toList());
+    }
+
+    public void createPendingInvitation(String fromUsername, String toUsername, String groupId) {
+        InvitationEntity entity = new InvitationEntity();
+        entity.setFromUsername(fromUsername);
+        entity.setToUsername(toUsername);
+        entity.setGroupId(groupId);
+        entity.setIsFriendRequest(false);
+        entity.setGmtCreate(LocalDateTime.now());
+        cassandraTemplate.insert(entity);
+    }
+
+    public boolean removeRequestingRelation(String username, String inviter, String groupId) {
+        Query query = Query
+                .empty()
+                .and(Criteria.where("to_username").is(username))
+                .and(Criteria.where("from_username").is(inviter))
+                .and(Criteria.where("is_friend_request").is(false))
+                .and(Criteria.where("group_id").is(groupId));
+        return cassandraTemplate.delete(query, InvitationEntity.class);
     }
 }

@@ -3,6 +3,7 @@ package com.csse433.blackboard.group.controller;
 import cn.hutool.core.util.IdUtil;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.Result;
+import com.csse433.blackboard.error.GeneralException;
 import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +62,9 @@ public class GroupController {
         if(groupService.userInGroup(userAccountDto.getUsername(), groupId)){
             return Result.fail("Already in group.");
         }
-        //TODO: Respond to corresponding Cassandra record
+        if (!groupService.removeRequestingRelation(userAccountDto.getUsername(), inviter, groupId)) {
+            return Result.fail("No such invitation");
+        }
         if (accepted) {
             groupService.addUserToGroup(userAccountDto.getUsername(), groupId);
         }

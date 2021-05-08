@@ -6,14 +6,10 @@ import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.group.dao.GroupDao;
 import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
-import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
 import com.csse433.blackboard.pojos.cassandra.UserByGroupIdEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.cassandra.core.query.Criteria;
-import org.springframework.data.cassandra.core.query.Query;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +59,7 @@ public class GroupServiceImpl implements GroupService {
         Date date = new Date();
         messageService.insertGroupInvitation(fromUsername, toUsername, date.getTime());
 
-        //TODO: Generate a pending record in Cassandra.
+        groupDao.createPendingInvitation(fromUsername, toUsername, groupId);
     }
 
     @Override
@@ -84,5 +80,10 @@ public class GroupServiceImpl implements GroupService {
         notifyMessageVo.setIsGroupChat(false);
         notifyMessageVo.setType(accepted ? MessageTypeEnum.GROUP_INVITATION_ACCEPTED : MessageTypeEnum.GROUP_INVITATION_REJECTED);
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
+    }
+
+    @Override
+    public boolean removeRequestingRelation(String username, String inviter, String groupId) {
+        return groupDao.removeRequestingRelation(username, inviter, groupId);
     }
 }

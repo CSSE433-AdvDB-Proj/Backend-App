@@ -20,4 +20,6 @@ public interface GroupService {
     void addUserToGroup(String username, String groupId);
 
     void sendReponseNotifyMessage(String fromUsername, String toUsername, boolean accepted);
+
+    boolean removeRequestingRelation(String username, String inviter, String groupId);
 }
