@@ -1,6 +1,8 @@
 package com.csse433.blackboard.group.service;
 
+import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
+import com.csse433.blackboard.pojos.mongo.MessageEntity;
 
 import java.util.List;
 
@@ -24,4 +26,6 @@ public interface GroupService {
     boolean removeRequestingRelation(String username, String inviter, String groupId);
 
     boolean existingRequestingRelation(String username, String inviter, String groupId);
+
+    void insertGroupInvitationResponse(String fromUsername, String toUsername, boolean accepted, long now);
 }
