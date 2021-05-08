@@ -6,9 +6,11 @@ import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.group.dao.GroupDao;
 import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
+import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
 import com.csse433.blackboard.pojos.cassandra.UserByGroupIdEntity;
+import com.csse433.blackboard.pojos.mongo.MessageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private MessageMongoService messageMongoService;
 
     @Override
     public GroupEntity createGroup(String groupName, String username) {
@@ -90,5 +95,16 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public boolean existingRequestingRelation(String username, String inviter, String groupId) {
         return groupDao.existingRequestingRelation(username, inviter, groupId);
+    }
+
+    @Override
+    public void insertGroupInvitationResponse(String fromUsername, String toUsername, boolean accepted, long now) {
+        MessageEntity entity = new MessageEntity();
+        entity.setTimestamp(now);
+        entity.setFrom(fromUsername);
+        entity.setTo(toUsername);
+        entity.setContent("");
+        entity.setMessageType(accepted ? MessageTypeEnum.GROUP_INVITATION_ACCEPTED.name() : MessageTypeEnum.GROUP_INVITATION_REJECTED.name());
+        messageMongoService.insert(entity);
     }
 }
