@@ -22,4 +22,6 @@ public interface GroupService {
     void sendReponseNotifyMessage(String fromUsername, String toUsername, boolean accepted);
 
     boolean removeRequestingRelation(String username, String inviter, String groupId);
+
+    boolean existingRequestingRelation(String username, String inviter, String groupId);
 }

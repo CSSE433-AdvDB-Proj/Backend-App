@@ -74,13 +74,12 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public void friendRequestResponse(String fromUsername, String toUsername, boolean accepted) {
-        //TODO: 不够健壮
-        //Check if the target user exists.
-        if (authService.userExists(toUsername) != null) {
-            throw GeneralException.ofUserNotFoundException(toUsername);
-        }
         Date now = new Date();
         //Check if the target user have sent friend request.
+        if(!friendDao.existingRequestingRelation(fromUsername, toUsername)){
+            throw GeneralException.ofInvalidOperationException();
+        }
+
         if (!friendDao.removeRequestingRelation(fromUsername, toUsername)) {
             throw GeneralException.ofInvalidOperationException();
         }

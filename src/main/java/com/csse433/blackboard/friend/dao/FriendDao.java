@@ -147,6 +147,15 @@ public class FriendDao {
 
     }
 
+    public boolean existingRequestingRelation(String fromUsername, String toUsername){
+        Query query = Query
+                .empty()
+                .and(Criteria.where("to_username").is(fromUsername))
+                .and(Criteria.where("from_username").is(toUsername))
+                .and(Criteria.where("is_friend_request").is(true));
+        return cassandraTemplate.count(query, InvitationEntity.class) > 0;
+    }
+
     /**
      * Remove any relation from user1 to user2.
      *
@@ -167,7 +176,6 @@ public class FriendDao {
                 .and(Criteria.where("to_username").is(fromUsername))
                 .and(Criteria.where("from_username").is(toUsername))
                 .and(Criteria.where("is_friend_request").is(true));
-        log.info(query.toString());
         return cassandraTemplate.delete(query, InvitationEntity.class);
     }
 

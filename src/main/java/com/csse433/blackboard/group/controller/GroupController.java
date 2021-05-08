@@ -58,9 +58,10 @@ public class GroupController {
         if(groupService.userInGroup(userAccountDto.getUsername(), groupId)){
             return Result.fail("Already in group.");
         }
-        if (!groupService.removeRequestingRelation(userAccountDto.getUsername(), inviter, groupId)) {
+        if(!groupService.existingRequestingRelation(userAccountDto.getUsername(), inviter, groupId)){
             return Result.fail("No such invitation");
         }
+        groupService.removeRequestingRelation(userAccountDto.getUsername(), inviter, groupId);
         if (accepted) {
             groupService.addUserToGroup(userAccountDto.getUsername(), groupId);
         }

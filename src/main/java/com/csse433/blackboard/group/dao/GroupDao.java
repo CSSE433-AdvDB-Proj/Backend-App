@@ -74,6 +74,16 @@ public class GroupDao {
         cassandraTemplate.insert(entity);
     }
 
+    public boolean existingRequestingRelation(String username, String inviter, String groupId){
+        Query query = Query
+                .empty()
+                .and(Criteria.where("to_username").is(username))
+                .and(Criteria.where("from_username").is(inviter))
+                .and(Criteria.where("is_friend_request").is(false))
+                .and(Criteria.where("group_id").is(groupId));
+        return cassandraTemplate.count(query, InvitationEntity.class) > 0;
+    }
+
     public boolean removeRequestingRelation(String username, String inviter, String groupId) {
         Query query = Query
                 .empty()

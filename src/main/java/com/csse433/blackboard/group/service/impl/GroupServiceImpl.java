@@ -86,4 +86,9 @@ public class GroupServiceImpl implements GroupService {
     public boolean removeRequestingRelation(String username, String inviter, String groupId) {
         return groupDao.removeRequestingRelation(username, inviter, groupId);
     }
+
+    @Override
+    public boolean existingRequestingRelation(String username, String inviter, String groupId) {
+        return groupDao.existingRequestingRelation(username, inviter, groupId);
+    }
 }

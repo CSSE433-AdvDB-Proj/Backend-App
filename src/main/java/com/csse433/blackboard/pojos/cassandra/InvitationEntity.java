@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 @Table("invitation")
 public class InvitationEntity {
 
-    @PrimaryKey("group_id")
+    @PrimaryKey("to_username")
+    private String toUsername;
+
+    @Column("group_id")
     private String groupId;
 
     @Column("from_username")
     private String fromUsername;
-
-    @Column("to_username")
-    private String toUsername;
 
     @Column("gmt_create")
     private LocalDateTime gmtCreate;

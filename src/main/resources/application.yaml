@@ -4,6 +4,8 @@ spring:
   data:
     mongodb:
       database:
+  freemarker:
+    check-template-location: false
 
 server:
   servlet:
@@ -27,4 +29,5 @@ application:
 
 mybatis-plus:
   mapper-locations: classpath:/**/*Mapper.xml
+
 
