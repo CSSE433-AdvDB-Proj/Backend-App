@@ -3,7 +3,6 @@ package com.csse433.blackboard.message.dao;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
-import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
@@ -17,10 +16,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 

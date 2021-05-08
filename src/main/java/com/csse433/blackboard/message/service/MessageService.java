@@ -6,7 +6,6 @@ import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

@@ -3,7 +3,6 @@ package com.csse433.blackboard.config;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
-import com.csse433.blackboard.error.GeneralException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

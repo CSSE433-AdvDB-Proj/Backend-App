@@ -3,14 +3,8 @@ package com.csse433.blackboard.friend.controller;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.Result;
 import com.csse433.blackboard.friend.service.FriendService;
-import com.csse433.blackboard.message.dto.OutboundMessageVo;
-import com.csse433.blackboard.message.dto.RetrieveMessageDto;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Controller Handling Friend requests

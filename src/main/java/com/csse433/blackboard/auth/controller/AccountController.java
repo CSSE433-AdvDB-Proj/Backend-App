@@ -1,6 +1,5 @@
 package com.csse433.blackboard.auth.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;

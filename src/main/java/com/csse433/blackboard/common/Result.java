@@ -3,8 +3,6 @@ package com.csse433.blackboard.common;
 
 import lombok.Getter;
 
-import java.io.Serializable;
-
 /**
  * Unified Response result class.
  *

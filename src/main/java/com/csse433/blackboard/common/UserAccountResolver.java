@@ -2,11 +2,9 @@ package com.csse433.blackboard.common;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.service.AuthService;
-import com.csse433.blackboard.auth.service.impl.AuthServiceImpl;
 import com.csse433.blackboard.common.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

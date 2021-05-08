@@ -1,7 +1,5 @@
 package com.csse433.blackboard.common;
 
-import lombok.Data;
-
 
 public enum MessageTypeEnum {
     /**
@@ -37,6 +35,6 @@ public enum MessageTypeEnum {
     /**
      * Reject an invitation.
      */
-    FRIEND_REQUEST_REJECTED;
+    FRIEND_REQUEST_REJECTED
 
 }

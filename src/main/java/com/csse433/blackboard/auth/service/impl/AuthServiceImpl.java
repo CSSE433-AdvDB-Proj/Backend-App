@@ -165,7 +165,7 @@ public class AuthServiceImpl implements AuthService {
      * @return The encrypted password.
      */
     private String encryptWithSalt(String password, String salt) {
-        MessageDigest md = null;
+        MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -179,9 +179,9 @@ public class AuthServiceImpl implements AuthService {
 
         byte[] bytes = md.digest();
 
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < bytes.length; i++) {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16)
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte : bytes) {
+            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16)
                     .substring(1));
         }
         return sb.toString();

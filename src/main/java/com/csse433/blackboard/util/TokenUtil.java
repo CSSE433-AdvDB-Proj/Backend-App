@@ -6,18 +6,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.csse433.blackboard.common.Constants;
-import io.netty.util.HashedWheelTimer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author chetzhang
@@ -33,7 +26,7 @@ public class TokenUtil {
 
     public static String token(String username) {
 
-        String token = "";
+        String token;
         try {
             //key and encryption algorithm.
             Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);

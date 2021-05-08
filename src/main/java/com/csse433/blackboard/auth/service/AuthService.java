@@ -4,7 +4,6 @@ import com.csse433.blackboard.auth.dto.UserAccountDto;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * @author chetzhang

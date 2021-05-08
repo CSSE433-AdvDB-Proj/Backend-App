@@ -1,6 +1,5 @@
 package com.csse433.blackboard.rdbms.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.message.dto.InboundMessageDto;

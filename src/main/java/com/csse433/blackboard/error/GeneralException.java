@@ -2,7 +2,6 @@ package com.csse433.blackboard.error;
 
 import com.csse433.blackboard.common.RelationTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * General error class for this application.

@@ -14,5 +14,5 @@ public enum RelationTypeEnum {
     /**
      * Is blacklisted.
      */
-    BLACKLISTED;
+    BLACKLISTED
 }
