@@ -44,12 +44,15 @@ public class MessageController {
     public Result<?> getHistoryMessage(UserAccountDto userAccountDto,
                                        @RequestParam int messageCount,
                                        @RequestParam String from,
-                                       @RequestParam(required = false) Long fromTimestamp) {
+                                       @RequestParam(required = false) Long fromTimestamp,
+                                       @RequestParam(required = false, defaultValue = "false") boolean group) {
+
         return Result.success(messageService.getHistoryMessage(
                 userAccountDto,
                 from,
                 messageCount,
-                fromTimestamp == null ? System.currentTimeMillis() : fromTimestamp));
+                fromTimestamp == null ? System.currentTimeMillis() : fromTimestamp,
+                group));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.csse433.blackboard.group.dao;
 
+import com.csse433.blackboard.pojos.cassandra.GroupByUserEntity;
 import com.csse433.blackboard.pojos.cassandra.GroupEntity;
 import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
 import com.csse433.blackboard.pojos.cassandra.UserByGroupIdEntity;
@@ -37,8 +38,13 @@ public class GroupDao {
         userByGroup.setGroupId(groupId);
         userByGroup.setUsername(username);
         userByGroup.setGmtJoin(LocalDateTime.now());
-
         cassandraTemplate.insert(userByGroup);
+
+        GroupByUserEntity groupByUserEntity = new GroupByUserEntity();
+        groupByUserEntity.setUsername(username);
+        groupByUserEntity.setGroupId(groupId);
+        cassandraTemplate.insert(groupByUserEntity);
+
     }
 
     public GroupEntity findGroupById(String groupId) {

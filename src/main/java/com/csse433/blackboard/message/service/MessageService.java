@@ -23,7 +23,7 @@ public interface MessageService {
 
     Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto);
 
-    List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long fromTimestamp);
+    List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long fromTimestamp, boolean group);
 
     void insertFriendRequestResponse(String fromUsername, String toUsername, boolean accepted, long now);
 

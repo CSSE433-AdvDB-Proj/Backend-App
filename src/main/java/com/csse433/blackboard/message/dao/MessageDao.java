@@ -5,6 +5,7 @@ import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
+import com.csse433.blackboard.pojos.cassandra.GroupByUserEntity;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,36 +68,66 @@ public class MessageDao {
     }
 
     public List<OutboundMessageVo> getOfflineMessage(UserAccountDto userAccountDto) {
-        //TODO: 查找自己所在的组
         String username = userAccountDto.getUsername();
         Long timestamp = (Long) redisTemplate.opsForHash().get(Constants.LAST_RETRIEVED_TIMESTAMP_REDIS_KEY, username);
         if (timestamp == null) {
             timestamp = System.currentTimeMillis();
         }
-        Query query = new Query();
-        query
+        Query friendMessageQuery = new Query();
+        friendMessageQuery
                 .addCriteria(Criteria.where("timestamp").gt(timestamp))
                 .addCriteria(Criteria.where("to").is(userAccountDto.getUsername()));
-        return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
+        //Get friend messages.
+        List<OutboundMessageVo> outboundMessageVos = mongoTemplate.find(friendMessageQuery, MessageEntity.class).stream().map(in -> {
             OutboundMessageVo out = new OutboundMessageVo();
             BeanUtils.copyProperties(in, out);
             return out;
 
         })
                 .collect(Collectors.toList());
+        //Get group messages.
+        List<String> groups = findGroupsByUser(username);
+        Query groupMessageQuery = new Query();
+        groupMessageQuery
+                .addCriteria(Criteria.where("timestamp").gt(timestamp))
+                .addCriteria(Criteria.where("to").in(groups));
+        outboundMessageVos.addAll(mongoTemplate.find(groupMessageQuery, MessageEntity.class).stream().map(in -> {
+            OutboundMessageVo out = new OutboundMessageVo();
+            BeanUtils.copyProperties(in, out);
+            return out;
+
+        })
+                .collect(Collectors.toList()));
+
+
+        return outboundMessageVos;
 
     }
 
-    public List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long timestamp) {
-        String username = userAccountDto.getUsername();
+    public List<String> findGroupsByUser(String username) {
+        org.springframework.data.cassandra.core.query.Query query =
+                org.springframework.data.cassandra.core.query.Query
+                        .empty()
+                        .and(org.springframework.data.cassandra.core.query.Criteria.where("username").is(username));
+
+        return cassandraTemplate.select(query, GroupByUserEntity.class).stream().map(GroupByUserEntity::getGroupId).collect(Collectors.toList());
+    }
+
+    public List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long timestamp, boolean group) {
         Query query = new Query();
         query
                 .addCriteria(Criteria.where("timestamp").lt(timestamp))
-                .addCriteria(Criteria.where("from").is(from))
-                .addCriteria(Criteria.where("to").is(username))
                 .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE))
                 .with(Sort.by(Sort.Direction.DESC, "timestamp"))
                 .limit(count);
+        if(!group){
+            String username = userAccountDto.getUsername();
+            query
+                    .addCriteria(Criteria.where("to").is(username))
+                    .addCriteria(Criteria.where("from").is(from));
+        } else {
+            query.addCriteria(Criteria.where("to").is(from));
+        }
         return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
             OutboundMessageVo out = new OutboundMessageVo();
             BeanUtils.copyProperties(in, out);

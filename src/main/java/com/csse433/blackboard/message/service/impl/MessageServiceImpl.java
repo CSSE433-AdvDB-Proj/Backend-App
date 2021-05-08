@@ -86,8 +86,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long fromTimestamp) {
-        return messageDao.getHistoryMessage(userAccountDto, from, count, fromTimestamp);
+    public List<OutboundMessageVo> getHistoryMessage(UserAccountDto userAccountDto, String from, int count, long fromTimestamp, boolean group) {
+        return messageDao.getHistoryMessage(userAccountDto, from, count, fromTimestamp, group);
     }
 
     @Override

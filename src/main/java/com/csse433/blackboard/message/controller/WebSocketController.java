@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author chetzhang
@@ -106,7 +107,7 @@ public class WebSocketController {
             e.printStackTrace();
         }
         NotifyMessageVo notifyMessageVo = messageService.generateGroupNotifyMessage(inboundMessageDto, date.getTime());
-        List<String> usernames = groupService.findUsersFromGroup(toGroup);
+        List<String> usernames = groupService.findUsersFromGroup(toGroup).stream().filter(username -> !username.equals(fromUser)).collect(Collectors.toList());
         usernames.forEach(username -> messagingTemplate.convertAndSendToUser(username, Constants.GROUP_CHAT, notifyMessageVo));
     }
 
