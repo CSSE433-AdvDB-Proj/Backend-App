@@ -6,6 +6,7 @@ import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.pojos.cassandra.GroupByUserEntity;
+import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,6 +102,8 @@ public class MessageDao {
         })
                 .collect(Collectors.toList()));
 
+        updateLastestRetrievedTimestamp(System.currentTimeMillis(), username);
+
 
         return outboundMessageVos;
 
@@ -120,7 +125,7 @@ public class MessageDao {
                 .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE))
                 .with(Sort.by(Sort.Direction.DESC, "timestamp"))
                 .limit(count);
-        if(!group){
+        if (!group) {
             String username = userAccountDto.getUsername();
             query
                     .addCriteria(Criteria.where("to").is(username))
@@ -138,4 +143,10 @@ public class MessageDao {
     }
 
 
+    public List<InvitationEntity> getUnrespondedInvitations(String username) {
+        org.springframework.data.cassandra.core.query.Query query =
+                org.springframework.data.cassandra.core.query.Query
+                        .query(org.springframework.data.cassandra.core.query.Criteria.where("to_username").is(username));
+        return cassandraTemplate.select(query, InvitationEntity.class);
+    }
 }

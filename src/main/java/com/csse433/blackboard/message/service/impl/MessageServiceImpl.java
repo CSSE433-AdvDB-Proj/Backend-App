@@ -1,6 +1,7 @@
 package com.csse433.blackboard.message.service.impl;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.group.service.GroupService;
@@ -11,12 +12,16 @@ import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
+import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalField;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,9 +35,6 @@ public class MessageServiceImpl implements MessageService {
     private MessageDao messageDao;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @Autowired
     private FriendService friendService;
 
     @Autowired
@@ -40,6 +42,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
 
     @Override
@@ -82,7 +87,26 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto) {
+        //Query unresponded invitations and notify.
+        List<InvitationEntity> invitations = messageDao.getUnrespondedInvitations(userAccountDto.getUsername());
+        List<NotifyMessageVo> invitationNotifications = generateInvitationNotifications(invitations);
+        invitationNotifications.forEach(notifyVo -> messagingTemplate.convertAndSendToUser(userAccountDto.getUsername(), Constants.PERSONAL_CHAT, notifyVo));
+        //Query offline messages.
         return messageDao.getOfflineMessage(userAccountDto).stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
+    }
+
+    private List<NotifyMessageVo> generateInvitationNotifications(List<InvitationEntity> invitations) {
+        return invitations.stream().map(this::invitationToNotification).collect(Collectors.toList());
+    }
+
+    private NotifyMessageVo invitationToNotification(InvitationEntity invitationEntity) {
+        NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
+        notifyMessageVo.setTimestamp(invitationEntity.getGmtCreate().toInstant(ZoneOffset.UTC).toEpochMilli());
+        notifyMessageVo.setChatId(invitationEntity.getFromUsername());
+        notifyMessageVo.setIsGroupChat(false);
+        notifyMessageVo.setType(invitationEntity.getIsFriendRequest() ? MessageTypeEnum.FRIEND_REQUEST : MessageTypeEnum.GROUP_INVITATION);
+        return notifyMessageVo;
+
     }
 
     @Override

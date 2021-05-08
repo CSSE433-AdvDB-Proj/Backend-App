@@ -49,7 +49,7 @@
                 setConnected(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(
-                    '/user/' + document.getElementById('user').value + '/group',
+                    '/user/' + document.getElementById('user').value + '/personal',
                     function(response) {
 
                         console.log('received message!')
@@ -115,7 +115,7 @@
             const name = document.getElementById('name').value;
             const content = document.getElementById('content').value;
             console.info();
-            stompClient.send("/toGroup", {}, JSON.stringify({
+            stompClient.send("/toUser", {}, JSON.stringify({
                 'from': user,
                 'to': name,
                 'type': 'message',
