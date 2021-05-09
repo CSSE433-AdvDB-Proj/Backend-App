@@ -37,7 +37,6 @@ public class MessageDao {
 
 
     public List<OutboundMessageVo> getPersonalMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
-        //TODO: 离线的时候再登陆收不到邀请
         Query query = new Query();
         query
                 .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.MESSAGE.name()))

@@ -66,7 +66,6 @@ public class GroupController {
             groupService.addUserToGroup(userAccountDto.getUsername(), groupId);
         }
         groupService.sendReponseNotifyMessage(userAccountDto.getUsername(), inviter, accepted);
-        // TODO: Insert into mongo
         groupService.insertGroupInvitationResponse(userAccountDto.getUsername(), inviter, accepted, System.currentTimeMillis());
         return Result.success();
     }
