@@ -30,7 +30,7 @@ public class UserAccountResolver implements HandlerMethodArgumentResolver {
     private AuthService authService;
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String requestToken = webRequest.getHeader(Constants.TOKEN_HEADER);
         if (requestToken == null) {
             return null;

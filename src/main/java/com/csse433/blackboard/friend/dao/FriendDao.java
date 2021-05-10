@@ -129,13 +129,6 @@ public class FriendDao {
      * @param toUsername
      */
     public void addFriendRequestAppendingStatus(String fromUsername, String toUsername) {
-//        FriendRelationEntity entity = new FriendRelationEntity();
-//        entity.setUsername1(fromUsername);
-//        entity.setUsername2(toUsername);
-//        entity.setGmtCreate(LocalDateTime.now());
-//        entity.setRelation(RelationTypeEnum.FRIEND_REQUESTING);
-//
-//        cassandraTemplate.insert(entity);
 
         InvitationEntity entity = new InvitationEntity();
         entity.setFromUsername(fromUsername);
@@ -164,12 +157,6 @@ public class FriendDao {
      * @return
      */
     public boolean removeRequestingRelation(String fromUsername, String toUsername) {
-//        Query query = Query
-//                .empty()
-//                .and(Criteria.where("username1").is(toUsername))
-//                .and(Criteria.where("username2").is(fromUsername));
-//        log.info(query.toString());
-//        return cassandraTemplate.delete(query, FriendRelationEntity.class);
 
         Query query = Query
                 .empty()

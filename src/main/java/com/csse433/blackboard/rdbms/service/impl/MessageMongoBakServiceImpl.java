@@ -1,19 +1,25 @@
 package com.csse433.blackboard.rdbms.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
+import com.csse433.blackboard.message.dto.OutboundMessageVo;
+import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
 import com.csse433.blackboard.rdbms.mapper.MessageMongoBakMapper;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Chet Zhang
@@ -35,8 +41,39 @@ public class MessageMongoBakServiceImpl extends ServiceImpl<MessageMongoBakMappe
     }
 
     @Override
-    public int checkNeedToFlush() {
+    public int messageCacheCount() {
         return baseMapper.selectCount(new QueryWrapper<>());
+    }
+
+    @Override
+    public List<OutboundMessageVo> getPersonalMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
+        LambdaQueryWrapper<MessageMongoBak> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+                .eq(MessageMongoBak::getMessageType, MessageTypeEnum.MESSAGE.name())
+                .eq(MessageMongoBak::getTimestamp, dto.getTimestamp())
+                .eq(MessageMongoBak::getFrom, dto.getChatId())
+                .eq(MessageMongoBak::getTo, userAccountDto.getUsername());
+        return baseMapper.selectList(wrapper).stream().map(in -> {
+            OutboundMessageVo out = new OutboundMessageVo();
+            BeanUtils.copyProperties(in, out);
+            return out;
+
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OutboundMessageVo> getGroupMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto) {
+        LambdaQueryWrapper<MessageMongoBak> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+                .eq(MessageMongoBak::getMessageType, MessageTypeEnum.MESSAGE.name())
+                .eq(MessageMongoBak::getTimestamp, dto.getTimestamp())
+                .eq(MessageMongoBak::getTo, dto.getChatId());
+        return baseMapper.selectList(wrapper).stream().map(in -> {
+            OutboundMessageVo out = new OutboundMessageVo();
+            BeanUtils.copyProperties(in, out);
+            return out;
+
+        }).collect(Collectors.toList());
     }
 
     private MessageMongoBak convertInboundDtoToEntity(InboundMessageDto inboundMessageDto, long time) {
@@ -45,7 +82,7 @@ public class MessageMongoBakServiceImpl extends ServiceImpl<MessageMongoBakMappe
         message.setFrom(inboundMessageDto.getFrom());
         message.setTimestamp(time);
         message.setTo(inboundMessageDto.getTo());
-        message.setMessagetype(MessageTypeEnum.MESSAGE.name());
+        message.setMessageType(MessageTypeEnum.MESSAGE.name());
         return message;
     }
 }

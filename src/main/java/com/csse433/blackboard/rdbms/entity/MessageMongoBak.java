@@ -34,7 +34,7 @@ public class MessageMongoBak implements Serializable {
     private String to;
 
     @TableField("messageType")
-    private String messagetype;
+    private String messageType;
 
 
 }

@@ -1,6 +1,8 @@
 package com.csse433.blackboard.message.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import com.csse433.blackboard.auth.server.service.MongoServerService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.friend.service.FriendService;
@@ -14,18 +16,20 @@ import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
+import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
-import java.time.temporal.TemporalField;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
@@ -46,6 +50,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    private MongoServerService mongoServerService;
+
 
     @Override
     public NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp) {
@@ -59,11 +66,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Map<String, List<OutboundMessageVo>> getPersonalMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
+        boolean connected = mongoServerService.isFirstServerConnected();
         List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
-        if(dtoList != null){
+        if (dtoList != null) {
             dtoList = dtoList.stream().filter(dto -> friendService.isFriend(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
             for (RetrieveMessageDto dto : dtoList) {
-                outboundMessageVos.addAll(messageDao.getPersonalMessage(userAccountDto, dto));
+                if(connected) {
+                    outboundMessageVos.addAll(messageDao.getPersonalMessage(userAccountDto, dto));
+                } else {
+                    outboundMessageVos.addAll(messageBakService.getPersonalMessage(userAccountDto, dto));
+                }
             }
             Optional<Long> max = outboundMessageVos.stream().map(OutboundMessageVo::getTimestamp).max(Long::compareTo);
             max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
@@ -73,11 +85,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Map<String, List<OutboundMessageVo>> getGroupMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
+        boolean connected = mongoServerService.isFirstServerConnected();
         List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
         if (dtoList != null) {
             dtoList = dtoList.stream().filter(dto -> groupService.userInGroup(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
             for (RetrieveMessageDto dto : dtoList) {
-                outboundMessageVos.addAll(messageDao.getGroupMessage(userAccountDto, dto));
+                if(connected) {
+                    outboundMessageVos.addAll(messageDao.getGroupMessage(userAccountDto, dto));
+                } else {
+                    outboundMessageVos.addAll(messageBakService.getGroupMessage(userAccountDto, dto));
+                }
             }
             Optional<Long> max = outboundMessageVos.stream().map(OutboundMessageVo::getTimestamp).max(Long::compareTo);
             max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
@@ -148,13 +165,32 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void flushTempMessage() {
-        int count = messageBakService.checkNeedToFlush();
-        if(count != 0){
-            //TODO: 改成循环分批刷入Mongo
-
-
+    public synchronized void flushTempMessage() {
+        int count = messageBakService.messageCacheCount();
+        if (count != 0) {
+            messageCacheToMongo(count);
+            log.info("MySQL messages have been flushed to MongoDB successfully.");
         }
+
+    }
+
+    private void messageCacheToMongo(int count) {
+        for (int offset = 0; offset < count; offset += 20) {
+            QueryWrapper<MessageMongoBak> wrapper = new QueryWrapper<MessageMongoBak>().last(String.format("LIMIT %s, %s", offset, 20)).orderByAsc("timestamp");
+            List<MessageMongoBak> messages = messageBakService
+                    .getBaseMapper()
+                    .selectList(wrapper);
+            List<MessageEntity> toMongo = messages.stream().map(this::sqlMessageToMongoMessage).collect(Collectors.toList());
+            messageMongoService.saveAll(toMongo);
+        }
+        messageBakService.getBaseMapper().delete(new QueryWrapper<>());
+
+    }
+
+    private MessageEntity sqlMessageToMongoMessage(MessageMongoBak bakMessage){
+        MessageEntity mongoMessage = new MessageEntity();
+        BeanUtils.copyProperties(bakMessage, mongoMessage);
+        return mongoMessage;
     }
 
     @Override
@@ -168,7 +204,6 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
-
     @Override
     public void insertMessage(InboundMessageDto inboundMessageDto, long timestamp) {
         MessageEntity entity = new MessageEntity();
@@ -179,7 +214,6 @@ public class MessageServiceImpl implements MessageService {
         entity.setMessageType(MessageTypeEnum.MESSAGE.name());
         messageMongoService.insert(entity);
     }
-
 
 
 }

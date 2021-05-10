@@ -24,7 +24,7 @@ public class BlackboardApplication {
 
     @Bean
     MongoClientSettings mongoClientSettings() {
-        return MongoClientSettings.builder().applyToClusterSettings(builder -> builder.serverSelectionTimeout(5, TimeUnit.SECONDS)).build();
+        return MongoClientSettings.builder().applyToClusterSettings(builder -> builder.serverSelectionTimeout(10, TimeUnit.SECONDS)).build();
     }
 
     @Bean

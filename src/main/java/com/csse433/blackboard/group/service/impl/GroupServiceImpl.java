@@ -36,8 +36,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupEntity createGroup(String groupName, String username) {
         String groupId = IdUtil.fastSimpleUUID();
-        GroupEntity newGroup = groupDao.createNewGroup(groupId, groupName, username);
-        return newGroup;
+        return groupDao.createNewGroup(groupId, groupName, username);
     }
 
     @Override

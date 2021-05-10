@@ -11,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GeneralException extends RuntimeException{
 
-//    @Autowired
-//    private ErrorLogService errorLogService;
-
 
     public GeneralException(String message) {
         super(message);

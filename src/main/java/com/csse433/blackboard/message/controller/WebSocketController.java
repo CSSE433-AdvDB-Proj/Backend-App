@@ -1,5 +1,6 @@
 package com.csse433.blackboard.message.controller;
 
+import com.csse433.blackboard.auth.server.service.MongoServerService;
 import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.friend.service.FriendService;
@@ -8,17 +9,16 @@ import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
+import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,9 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WebSocketController {
 
-    private final static ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>());
+
 
 
     @Autowired
@@ -48,6 +46,9 @@ public class WebSocketController {
     @Autowired
     private IMessageMongoBakService messageBakService;
 
+    @Autowired
+    private MongoServerService mongoServerService;
+
     @MessageMapping("/toUser")
     public void toUser(InboundMessageDto inboundMessageDto) {
 
@@ -64,14 +65,11 @@ public class WebSocketController {
             return;
         }
 
-
-        try {
+        if (mongoServerService.isFirstServerConnected()) {
             messageService.insertMessage(inboundMessageDto, date.getTime());
-            executor.execute(() -> messageService.flushTempMessage());
-
-        } catch (DataAccessResourceFailureException e) {
+            flush();
+        } else {
             messageBakService.insertTempMessage(inboundMessageDto, date.getTime());
-            e.printStackTrace();
         }
         NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
         messagingTemplate.convertAndSendToUser(toUser, Constants.PERSONAL_CHAT, notifyMessageVo);
@@ -97,18 +95,19 @@ public class WebSocketController {
             return;
         }
 
-
-        try {
+        if (mongoServerService.isFirstServerConnected()) {
             messageService.insertMessage(inboundMessageDto, date.getTime());
-            executor.execute(() -> messageService.flushTempMessage());
-
-        } catch (DataAccessResourceFailureException e) {
+            flush();
+        } else {
             messageBakService.insertTempMessage(inboundMessageDto, date.getTime());
-            e.printStackTrace();
         }
         NotifyMessageVo notifyMessageVo = messageService.generateGroupNotifyMessage(inboundMessageDto, date.getTime());
         List<String> usernames = groupService.findUsersFromGroup(toGroup).stream().filter(username -> !username.equals(fromUser)).collect(Collectors.toList());
         usernames.forEach(username -> messagingTemplate.convertAndSendToUser(username, Constants.GROUP_CHAT, notifyMessageVo));
+    }
+
+    private void flush(){
+        new Thread(() -> messageService.flushTempMessage()).start();
     }
 
 

@@ -1,6 +1,9 @@
 package com.csse433.blackboard.rdbms.service;
 
+import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
+import com.csse433.blackboard.message.dto.OutboundMessageVo;
+import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -21,5 +24,9 @@ public interface IMessageMongoBakService extends IService<MessageMongoBak> {
 
     void insertTempMessage(InboundMessageDto inboundMessageDto, long time);
 
-    int checkNeedToFlush();
+    int messageCacheCount();
+
+    List<OutboundMessageVo> getPersonalMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto);
+
+    List<OutboundMessageVo> getGroupMessage(UserAccountDto userAccountDto, RetrieveMessageDto dto);
 }
