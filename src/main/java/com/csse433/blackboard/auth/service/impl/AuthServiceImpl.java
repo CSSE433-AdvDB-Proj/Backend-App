@@ -6,6 +6,7 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.pojos.cassandra.UserEntity;
 import com.csse433.blackboard.util.TokenUtil;
+import io.lettuce.core.protocol.ConnectionWatchdog;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
