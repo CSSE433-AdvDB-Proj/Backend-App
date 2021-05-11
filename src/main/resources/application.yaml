@@ -7,6 +7,10 @@ spring:
   freemarker:
     check-template-location: false
 
+  redis:
+    connect-timeout: 5S
+    timeout: 5S
+
 server:
   servlet:
     context-path: /blackboard

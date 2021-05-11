@@ -74,6 +74,7 @@ public class MessageServiceImpl implements MessageService {
                 if(connected) {
                     outboundMessageVos.addAll(messageDao.getPersonalMessage(userAccountDto, dto));
                 } else {
+                    //Potential Bugs
                     outboundMessageVos.addAll(messageBakService.getPersonalMessage(userAccountDto, dto));
                 }
             }
