@@ -1,5 +1,6 @@
 package com.csse433.blackboard.auth.dao;
 
+import com.csse433.blackboard.auth.server.service.RedisServerService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.pojos.cassandra.UserEntity;
 import com.csse433.blackboard.rdbms.service.IRedisBakService;
@@ -26,6 +27,9 @@ public class AuthDao {
 
     @Autowired
     private IRedisBakService redisBakService;
+
+    @Autowired
+    private RedisServerService redisServerService;
 
     /**
      * Inserts a user in cassandra. Returns false if the username exists.
@@ -65,15 +69,10 @@ public class AuthDao {
      * @return
      */
     public String getUsernameByToken(String token) {
-        String username = null;
-        try {
-            username = redisTemplate.opsForValue().get(TokenUtil.getLoginTokenKey(token));
-        } catch (RedisConnectionFailureException | QueryTimeoutException e) {
-            username = redisBakService.findUserByToken(token);
-            log.error("Redis is down.");
-            // e.printStackTrace();
+        if (!redisServerService.isConnected()) {
+            return redisBakService.findUserByToken(token);
         }
-        return username;
+        return redisTemplate.opsForValue().get(TokenUtil.getLoginTokenKey(token));
     }
 
     /**
@@ -82,11 +81,11 @@ public class AuthDao {
      */
     public void extendTokenExpireTime(String token) {
         // TokenUtil.setTokenExpireTime(token, Constants.TOKEN_EXPIRE_TIME);
-        try {
-            redisTemplate.expire(TokenUtil.getLoginTokenKey(token), Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
-        } catch (RedisConnectionFailureException | QueryTimeoutException e) {
+        if (!redisServerService.isConnected()) {
             log.error("Redis is down.");
+            return;
         }
+        redisTemplate.expire(TokenUtil.getLoginTokenKey(token), Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
     }
 
     /**
@@ -96,13 +95,12 @@ public class AuthDao {
     public void killToken(String token){
         // redisTemplate.opsForSet().remove(Constants.TOKEN_POOL, tokenKey);
         // TokenUtil.setTokenExpireTime(token, Constants.TOKEN_EXPIRE_IMMEDIATELY);
-        try {
-            redisTemplate.expire(TokenUtil.getLoginTokenKey(token), Constants.TOKEN_EXPIRE_IMMEDIATELY, TimeUnit.MINUTES);
-        } catch (RedisConnectionFailureException | QueryTimeoutException e) {
+        if (!redisServerService.isConnected()) {
             log.error("Redis is down.");
             redisBakService.deleteUserToken(token);
-            // e.printStackTrace();
+            return;
         }
+        redisTemplate.expire(TokenUtil.getLoginTokenKey(token), Constants.TOKEN_EXPIRE_IMMEDIATELY, TimeUnit.MINUTES);
     }
 
 
@@ -116,14 +114,12 @@ public class AuthDao {
      */
     public void setNewToken(String username, String newToken) {
         // redisTemplate.opsForSet().add(Constants.TOKEN_POOL, TokenUtil.getLoginTokenKey(newToken));
-        try {
-            redisTemplate.opsForValue().set(TokenUtil.getLoginTokenKey(newToken), username, Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
-        } catch (RedisConnectionFailureException | QueryTimeoutException e) {
+        if (!redisServerService.isConnected()) {
             redisBakService.setUserToken(username, newToken);
             log.error("Redis is down.");
-            // e.printStackTrace();
+            return;
         }
-
+        redisTemplate.opsForValue().set(TokenUtil.getLoginTokenKey(newToken), username, Constants.TOKEN_EXPIRE_TIME, TimeUnit.MINUTES);
     }
 
 

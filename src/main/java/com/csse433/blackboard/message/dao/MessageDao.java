@@ -1,6 +1,7 @@
 package com.csse433.blackboard.message.dao;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
+import com.csse433.blackboard.auth.server.service.RedisServerService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,9 @@ public class MessageDao {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private RedisServerService redisServerService;
 
 
 
@@ -65,10 +70,16 @@ public class MessageDao {
     }
 
     public void updateLastestRetrievedTimestamp(Long timestamp, String username) {
+        if (!redisServerService.isConnected()) {
+            return;
+        }
         redisTemplate.opsForHash().put(Constants.LAST_RETRIEVED_TIMESTAMP_REDIS_KEY, username, timestamp);
     }
 
     public List<OutboundMessageVo> getOfflineMessage(UserAccountDto userAccountDto) {
+        if (!redisServerService.isConnected()) {
+            return new LinkedList<>();
+        }
         String username = userAccountDto.getUsername();
         Long timestamp = (Long) redisTemplate.opsForHash().get(Constants.LAST_RETRIEVED_TIMESTAMP_REDIS_KEY, username);
         if (timestamp == null) {
