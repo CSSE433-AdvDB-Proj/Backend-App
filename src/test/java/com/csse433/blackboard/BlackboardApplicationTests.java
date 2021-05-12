@@ -1,21 +1,11 @@
 package com.csse433.blackboard;
 
-import com.csse433.blackboard.common.RelationTypeEnum;
-import com.csse433.blackboard.friend.dao.FriendDao;
-import io.lettuce.core.RedisClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.RedisConnectionFailureException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import reactor.core.publisher.Mono;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 @SpringBootTest
 class BlackboardApplicationTests {
