@@ -30,6 +30,9 @@ application:
     allow-no-friend-communication: true
     # Turn this on to see error messages in the frontend/Postman.
     show-detailed-error-message: true
+    #Redis Heart beat(in seconds)
+    redis-heart-beat: 3
+
 
 mybatis-plus:
   mapper-locations: classpath:/**/*Mapper.xml
