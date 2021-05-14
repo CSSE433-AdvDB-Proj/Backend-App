@@ -89,9 +89,13 @@ public class WebSocketController {
             log.info(fromUser + " is trying to send messages to " + toGroup + " which does not exist.");
             return;
         }
+        if (!groupService.userInGroup(fromUser, toGroup)) {
+            log.info(fromUser + " is trying to send messages to " + toGroup + " where the user does not belong to.");
+            return;
+        }
 
         if (StringUtils.isNotBlank(invalidUsername)) {
-            log.info("User not found: " + invalidUsername);
+            log.trace("User not found: " + invalidUsername);
             return;
         }
 
