@@ -106,7 +106,7 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<UserAccountDto> searchFriendFuzzy(String currentUsername, String likeUsername) {
-        List<String> fuzzyFriendUsernames = friendDao.findFriendFuzzy(currentUsername, likeUsername);
+        List<String> fuzzyFriendUsernames = friendDao.findFriendExact(currentUsername, likeUsername);
         return fuzzyFriendUsernames.stream().map(friendUsername -> authService.getUserFromUsername(friendUsername)).collect(Collectors.toList());
     }
 

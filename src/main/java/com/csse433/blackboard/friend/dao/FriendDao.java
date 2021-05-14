@@ -102,13 +102,13 @@ public class FriendDao {
      * @param likeUsername
      * @return
      */
-    public List<String> findFriendFuzzy(String currentUsername, String likeUsername) {
+    public List<String> findFriendExact(String currentUsername, String likeUsername) {
         Query query = Query.empty();
 
         query = query
                 .columns(Columns.from("username2"))
                 .and(Criteria.where("username1").is(currentUsername))
-                .and(Criteria.where("username2").like(likeUsername));
+                .and(Criteria.where("username2").is(likeUsername));
                 //.sort(Sort.by("username2").ascending());
 
 
