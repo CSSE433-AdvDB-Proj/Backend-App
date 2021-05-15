@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -105,5 +106,23 @@ public class GroupServiceImpl implements GroupService {
         entity.setContent("");
         entity.setMessageType(accepted ? MessageTypeEnum.GROUP_INVITATION_ACCEPTED.name() : MessageTypeEnum.GROUP_INVITATION_REJECTED.name());
         messageMongoService.insert(entity);
+    }
+
+    @Override
+    public List<GroupEntity> getGroupList(String username) {
+        List<String> groupList = groupDao.findGroupByUsername(username);
+        return groupList
+                .stream()
+                .map(groupDao::findGroupById)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupEntity> searchGroupExact(String username, String groupName) {
+        List<GroupEntity> groupList = getGroupList(username);
+        return groupList
+                .stream()
+                .filter(groupEntity -> groupName.equalsIgnoreCase(groupEntity.getGroupName()))
+                .collect(Collectors.toList());
     }
 }

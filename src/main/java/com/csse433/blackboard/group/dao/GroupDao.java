@@ -99,4 +99,17 @@ public class GroupDao {
                 .and(Criteria.where("group_id").is(groupId));
         return cassandraTemplate.delete(query, InvitationEntity.class);
     }
+
+    public List<String> findGroupByUsername(String username) {
+        Query query = Query
+                .empty()
+                .and(Criteria.where("username").is(username));
+        List<GroupByUserEntity> groupByUserEntities = cassandraTemplate.select(query, GroupByUserEntity.class);
+        return groupByUserEntities
+                .stream()
+                .map(GroupByUserEntity::getGroupId)
+                .collect(Collectors.toList());
+
+
+    }
 }

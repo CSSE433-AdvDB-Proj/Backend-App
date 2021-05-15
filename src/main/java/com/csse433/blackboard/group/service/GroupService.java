@@ -26,4 +26,8 @@ public interface GroupService {
     boolean existingRequestingRelation(String username, String inviter, String groupId);
 
     void insertGroupInvitationResponse(String fromUsername, String toUsername, boolean accepted, long now);
+
+    List<GroupEntity> getGroupList(String username);
+
+    List<GroupEntity> searchGroupExact(String username, String groupName);
 }

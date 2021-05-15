@@ -69,4 +69,15 @@ public class GroupController {
         groupService.insertGroupInvitationResponse(userAccountDto.getUsername(), inviter, accepted, System.currentTimeMillis());
         return Result.success();
     }
+
+    @GetMapping("/get_groups")
+    public Result<?> getFriendList(UserAccountDto userAccountDto) {
+        return Result.success(groupService.getGroupList(userAccountDto.getUsername()));
+    }
+
+    @GetMapping("/search_group")
+    public Result<?> searchFriend(UserAccountDto userAccountDto,
+                                  @RequestParam String groupName) {
+        return Result.success(groupService.searchGroupExact(userAccountDto.getUsername(), groupName));
+    }
 }
