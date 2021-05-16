@@ -115,7 +115,7 @@
             const name = document.getElementById('name').value;
             const content = document.getElementById('content').value;
             console.info();
-            stompClient.send("/toBoard", {}, JSON.stringify({
+            stompClient.send("/toBoard/12", {}, JSON.stringify({
                 'from': user,
                 'to': name,
                 'content': {

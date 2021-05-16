@@ -43,6 +43,11 @@ public class Constants {
     public static final String GROUP_CHAT = "/group";
 
     /**
+     * Group chat destination address.
+     */
+    public static final String BLACKBOARD_CHAT = "/board";
+
+    /**
      * Last retrieved timestamp redis key.
      */
     public static final String LAST_RETRIEVED_TIMESTAMP_REDIS_KEY = "Last_Retrieved_Timestamp";

@@ -14,10 +14,13 @@ import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.websocket.server.PathParam;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,10 +114,12 @@ public class WebSocketController {
         usernames.forEach(username -> messagingTemplate.convertAndSendToUser(username, Constants.GROUP_CHAT, notifyMessageVo));
     }
 
-    @MessageMapping("/toBoard")
-    public void toGroup(InboundDrawingDto inboundDrawingDto) {
+    @MessageMapping("/toBoard/{id}")
+    public void toGroup(InboundDrawingDto inboundDrawingDto, @DestinationVariable String id) {
         //TODO: board相关
         System.out.println(inboundDrawingDto);
+        String subscriptionPath = String.format(Constants.BLACKBOARD_CHAT + "%s", id);
+
     }
 
     private void flush(){
