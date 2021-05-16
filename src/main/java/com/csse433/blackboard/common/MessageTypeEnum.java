@@ -35,6 +35,11 @@ public enum MessageTypeEnum {
     /**
      * Reject an invitation.
      */
-    FRIEND_REQUEST_REJECTED
+    FRIEND_REQUEST_REJECTED,
+
+    /**
+     * Drawing.
+     */
+    DRAWING,
 
 }

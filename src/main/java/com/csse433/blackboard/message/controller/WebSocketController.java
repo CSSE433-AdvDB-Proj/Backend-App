@@ -120,6 +120,19 @@ public class WebSocketController {
         System.out.println(inboundDrawingDto);
         String subscriptionPath = String.format(Constants.BLACKBOARD_CHAT + "%s", id);
 
+
+        Date date = new Date();
+        if (mongoServerService.isFirstServerConnected()) {
+            messageService.insertDrawing(inboundDrawingDto, date.getTime());
+            flush();
+        } else {
+            // messageBakService.insertTempDrawing(inboundDrawingDto, date.getTime());
+        }
+
+
+        // TODO: Notify Message Drawing
+        // NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
+        // messagingTemplate.convertAndSendToUser(toUser, Constants.PERSONAL_CHAT, notifyMessageVo);
     }
 
     private void flush(){

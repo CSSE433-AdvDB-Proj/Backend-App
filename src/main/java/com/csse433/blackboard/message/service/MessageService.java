@@ -1,10 +1,7 @@
 package com.csse433.blackboard.message.service;
 
 import com.csse433.blackboard.auth.dto.UserAccountDto;
-import com.csse433.blackboard.message.dto.InboundMessageDto;
-import com.csse433.blackboard.message.dto.NotifyMessageVo;
-import com.csse433.blackboard.message.dto.OutboundMessageVo;
-import com.csse433.blackboard.message.dto.RetrieveMessageDto;
+import com.csse433.blackboard.message.dto.*;
 
 import java.util.List;
 import java.util.Map;
@@ -36,4 +33,6 @@ public interface MessageService {
     NotifyMessageVo generateGroupNotifyMessage(InboundMessageDto inboundMessageDto, long time);
 
     Map<String,List<OutboundMessageVo>> getGroupMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
+
+    void insertDrawing(InboundDrawingDto inboundDrawingDto, long time);
 }

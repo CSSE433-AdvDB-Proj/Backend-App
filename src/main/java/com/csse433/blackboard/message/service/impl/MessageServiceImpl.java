@@ -1,5 +1,6 @@
 package com.csse433.blackboard.message.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.server.service.MongoServerService;
@@ -8,10 +9,7 @@ import com.csse433.blackboard.common.MessageTypeEnum;
 import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.message.dao.MessageDao;
-import com.csse433.blackboard.message.dto.InboundMessageDto;
-import com.csse433.blackboard.message.dto.NotifyMessageVo;
-import com.csse433.blackboard.message.dto.OutboundMessageVo;
-import com.csse433.blackboard.message.dto.RetrieveMessageDto;
+import com.csse433.blackboard.message.dto.*;
 import com.csse433.blackboard.message.service.MessageMongoService;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
@@ -101,6 +99,17 @@ public class MessageServiceImpl implements MessageService {
             max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
         }
         return outboundMessageVos.stream().collect(Collectors.groupingBy(OutboundMessageVo::getFrom));
+    }
+
+    @Override
+    public void insertDrawing(InboundDrawingDto inboundDrawingDto, long timestamp) {
+        MessageEntity entity = new MessageEntity();
+        entity.setTimestamp(timestamp);
+        entity.setFrom(inboundDrawingDto.getFrom());
+        entity.setTo(inboundDrawingDto.getTo());
+        entity.setContent(JSON.toJSONString(inboundDrawingDto.getContent()));
+        entity.setMessageType(MessageTypeEnum.DRAWING.name());
+        messageMongoService.insert(entity);
     }
 
     @Override
