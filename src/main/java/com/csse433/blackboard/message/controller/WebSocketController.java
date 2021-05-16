@@ -55,7 +55,7 @@ public class WebSocketController {
     private ExecutorService executorService;
 
     @MessageMapping("/toUser")
-    public void toUser(InboundMessageDto<String> inboundMessageDto) {
+    public void toUser(InboundMessageDto inboundMessageDto) {
 
         Date date = new Date();
         String fromUser = inboundMessageDto.getFrom();
@@ -85,7 +85,7 @@ public class WebSocketController {
     private GroupService groupService;
 
     @MessageMapping("/toGroup")
-    public void toGroup(InboundMessageDto<String> inboundMessageDto) {
+    public void toGroup(InboundMessageDto inboundMessageDto) {
         Date date = new Date();
         String fromUser = inboundMessageDto.getFrom();
         String toGroup = inboundMessageDto.getTo();
