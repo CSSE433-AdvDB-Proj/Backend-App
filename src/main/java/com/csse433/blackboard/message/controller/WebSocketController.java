@@ -5,6 +5,7 @@ import com.csse433.blackboard.auth.service.AuthService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.group.service.GroupService;
+import com.csse433.blackboard.message.dto.InboundDrawingDto;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
@@ -108,6 +109,11 @@ public class WebSocketController {
         NotifyMessageVo notifyMessageVo = messageService.generateGroupNotifyMessage(inboundMessageDto, date.getTime());
         List<String> usernames = groupService.findUsersFromGroup(toGroup).stream().filter(username -> !username.equals(fromUser)).collect(Collectors.toList());
         usernames.forEach(username -> messagingTemplate.convertAndSendToUser(username, Constants.GROUP_CHAT, notifyMessageVo));
+    }
+
+    @MessageMapping("/toBoard")
+    public void toGroup(InboundDrawingDto inboundDrawingDto) {
+        System.out.println(inboundDrawingDto);
     }
 
     private void flush(){
