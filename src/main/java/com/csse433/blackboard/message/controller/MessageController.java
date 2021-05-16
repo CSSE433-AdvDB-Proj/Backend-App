@@ -6,6 +6,7 @@ import com.csse433.blackboard.common.Result;
 import com.csse433.blackboard.message.dto.OutboundMessageVo;
 import com.csse433.blackboard.message.dto.RetrieveMessageDto;
 import com.csse433.blackboard.message.service.MessageService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

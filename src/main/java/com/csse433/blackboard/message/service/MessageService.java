@@ -16,6 +16,8 @@ public interface MessageService {
 
     NotifyMessageVo generateNotifyMessage(InboundMessageDto inboundMessageDto, long timestamp);
 
+    NotifyMessageVo generateNotifyDrawing(InboundDrawingDto inboundDrawingDto, long timestamp);
+
     Map<String, List<OutboundMessageVo>> getPersonalMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
 
     Map<String, List<OutboundMessageVo>> getOfflineMessage(UserAccountDto userAccountDto);
@@ -35,4 +37,6 @@ public interface MessageService {
     Map<String,List<OutboundMessageVo>> getGroupMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
 
     void insertDrawing(InboundDrawingDto inboundDrawingDto, long time);
+
+    Map<String, List<OutboundDrawingVo>> getDrawing(List<RetrieveDrawingDto> dtoList, UserAccountDto userAccountDto);
 }

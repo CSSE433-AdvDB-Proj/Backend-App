@@ -116,23 +116,25 @@ public class WebSocketController {
 
     @MessageMapping("/toBoard/{id}")
     public void toGroup(InboundDrawingDto inboundDrawingDto, @DestinationVariable String id) {
-        //TODO: board相关
         System.out.println(inboundDrawingDto);
-        String subscriptionPath = String.format(Constants.BLACKBOARD_CHAT + "%s", id);
-
+        String subscriptionPath = String.format(Constants.BLACKBOARD_CHAT + "/%s", id);
+        String invalidUsername = authService.userExists(inboundDrawingDto.getFrom());
+        if (StringUtils.isNotBlank(invalidUsername)) {
+            log.trace("User not found: " + invalidUsername);
+            return;
+        }
 
         Date date = new Date();
         if (mongoServerService.isFirstServerConnected()) {
             messageService.insertDrawing(inboundDrawingDto, date.getTime());
             flush();
         } else {
-            // messageBakService.insertTempDrawing(inboundDrawingDto, date.getTime());
+            messageBakService.insertTempDrawing(inboundDrawingDto, date.getTime());
         }
 
-
-        // TODO: Notify Message Drawing
-        // NotifyMessageVo notifyMessageVo = messageService.generateNotifyMessage(inboundMessageDto, date.getTime());
-        // messagingTemplate.convertAndSendToUser(toUser, Constants.PERSONAL_CHAT, notifyMessageVo);
+        NotifyMessageVo notifyMessageVo = messageService.generateNotifyDrawing(inboundDrawingDto, date.getTime());
+        // TODO: Determine destination username
+        messagingTemplate.convertAndSendToUser("TODO", subscriptionPath, notifyMessageVo);
     }
 
     private void flush(){

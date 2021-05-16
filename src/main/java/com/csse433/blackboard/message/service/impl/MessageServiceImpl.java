@@ -63,6 +63,16 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public NotifyMessageVo generateNotifyDrawing(InboundDrawingDto inboundDrawingDto, long timestamp) {
+        NotifyMessageVo notifyMessageVo = new NotifyMessageVo();
+        notifyMessageVo.setTimestamp(timestamp);
+        notifyMessageVo.setChatId(inboundDrawingDto.getFrom());
+        notifyMessageVo.setIsGroupChat(false);
+        notifyMessageVo.setType(MessageTypeEnum.DRAWING);
+        return notifyMessageVo;
+    }
+
+    @Override
     public Map<String, List<OutboundMessageVo>> getPersonalMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto) {
         boolean connected = mongoServerService.isFirstServerConnected();
         List<OutboundMessageVo> outboundMessageVos = new ArrayList<>();
@@ -110,6 +120,25 @@ public class MessageServiceImpl implements MessageService {
         entity.setContent(JSON.toJSONString(inboundDrawingDto.getContent()));
         entity.setMessageType(MessageTypeEnum.DRAWING.name());
         messageMongoService.insert(entity);
+    }
+
+    @Override
+    public Map<String, List<OutboundDrawingVo>> getDrawing(List<RetrieveDrawingDto> dtoList, UserAccountDto userAccountDto) {
+        boolean connected = mongoServerService.isFirstServerConnected();
+        List<OutboundDrawingVo> outboundDrawingVos = new ArrayList<>();
+        if (dtoList != null) {
+//            dtoList = dtoList.stream().filter(dto -> groupService.userInGroup(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
+            for (RetrieveDrawingDto dto : dtoList) {
+                if(connected) {
+                    outboundDrawingVos.addAll(messageDao.getDrawing(userAccountDto, dto));
+                } else {
+                    outboundDrawingVos.addAll(messageBakService.getDrawing(userAccountDto, dto));
+                }
+            }
+            Optional<Long> max = outboundDrawingVos.stream().map(OutboundDrawingVo::getTimestamp).max(Long::compareTo);
+            max.ifPresent(timestamp -> messageDao.updateLastestRetrievedTimestamp(timestamp, userAccountDto.getUsername()));
+        }
+        return outboundDrawingVos.stream().collect(Collectors.groupingBy(OutboundDrawingVo::getFrom));
     }
 
     @Override

@@ -1,14 +1,15 @@
 package com.csse433.blackboard.message.dao;
 
+import com.alibaba.fastjson.JSON;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.auth.server.service.RedisServerService;
 import com.csse433.blackboard.common.Constants;
 import com.csse433.blackboard.common.MessageTypeEnum;
-import com.csse433.blackboard.message.dto.OutboundMessageVo;
-import com.csse433.blackboard.message.dto.RetrieveMessageDto;
+import com.csse433.blackboard.message.dto.*;
 import com.csse433.blackboard.pojos.cassandra.GroupByUserEntity;
 import com.csse433.blackboard.pojos.cassandra.InvitationEntity;
 import com.csse433.blackboard.pojos.mongo.MessageEntity;
+import org.apache.catalina.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraTemplate;
@@ -66,6 +67,22 @@ public class MessageDao {
             BeanUtils.copyProperties(in, out);
             return out;
 
+        }).collect(Collectors.toList());
+    }
+
+    public List<OutboundDrawingVo> getDrawing(UserAccountDto userAccountDto, RetrieveDrawingDto dto) {
+        Query query = new Query();
+        query
+                .addCriteria(Criteria.where("messageType").is(MessageTypeEnum.DRAWING.name()))
+                .addCriteria(Criteria.where("timestamp").is(dto.getTimestamp()))
+                .addCriteria(Criteria.where("to").is(dto.getBoardId()));
+        return mongoTemplate.find(query, MessageEntity.class).stream().map(in -> {
+            OutboundDrawingVo out = new OutboundDrawingVo();
+            out.setContent(JSON.parseObject(in.getContent(), OutboundDrawingVo.Content.class));
+            out.setFrom(in.getFrom());
+            out.setTo(in.getTo());
+            out.setTimestamp(in.getTimestamp());
+            return out;
         }).collect(Collectors.toList());
     }
 

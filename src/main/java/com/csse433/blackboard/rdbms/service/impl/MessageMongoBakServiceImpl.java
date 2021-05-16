@@ -1,12 +1,11 @@
 package com.csse433.blackboard.rdbms.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.csse433.blackboard.auth.dto.UserAccountDto;
 import com.csse433.blackboard.common.MessageTypeEnum;
-import com.csse433.blackboard.message.dto.InboundMessageDto;
-import com.csse433.blackboard.message.dto.OutboundMessageVo;
-import com.csse433.blackboard.message.dto.RetrieveMessageDto;
+import com.csse433.blackboard.message.dto.*;
 import com.csse433.blackboard.rdbms.entity.MessageMongoBak;
 import com.csse433.blackboard.rdbms.mapper.MessageMongoBakMapper;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
@@ -73,6 +72,34 @@ public class MessageMongoBakServiceImpl extends ServiceImpl<MessageMongoBakMappe
             BeanUtils.copyProperties(in, out);
             return out;
 
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void insertTempDrawing(InboundDrawingDto inboundDrawingDto, long time) {
+        MessageMongoBak message = new MessageMongoBak();
+        message.setContent(JSON.toJSONString(inboundDrawingDto.getContent()));
+        message.setFrom(inboundDrawingDto.getFrom());
+        message.setTimestamp(time);
+        message.setTo(inboundDrawingDto.getTo());
+        message.setMessageType(MessageTypeEnum.DRAWING.name());
+        save(message);
+    }
+
+    @Override
+    public List<OutboundDrawingVo> getDrawing(UserAccountDto userAccountDto, RetrieveDrawingDto dto) {
+        LambdaQueryWrapper<MessageMongoBak> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+                .eq(MessageMongoBak::getMessageType, MessageTypeEnum.DRAWING.name())
+                .eq(MessageMongoBak::getTimestamp, dto.getTimestamp())
+                .eq(MessageMongoBak::getTo, dto.getBoardId());
+        return baseMapper.selectList(wrapper).stream().map(in -> {
+            OutboundDrawingVo out = new OutboundDrawingVo();
+            out.setContent(JSON.parseObject(in.getContent(), OutboundDrawingVo.Content.class));
+            out.setFrom(in.getFrom());
+            out.setTo(in.getTo());
+            out.setTimestamp(in.getTimestamp());
+            return out;
         }).collect(Collectors.toList());
     }
 
