@@ -10,7 +10,6 @@ import com.csse433.blackboard.message.dto.InboundMessageDto;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
-import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,10 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.websocket.server.PathParam;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -53,8 +51,11 @@ public class WebSocketController {
     @Autowired
     private MongoServerService mongoServerService;
 
+    @Autowired
+    private ExecutorService executorService;
+
     @MessageMapping("/toUser")
-    public void toUser(InboundMessageDto inboundMessageDto) {
+    public void toUser(InboundMessageDto<String> inboundMessageDto) {
 
         Date date = new Date();
         String fromUser = inboundMessageDto.getFrom();
@@ -84,7 +85,7 @@ public class WebSocketController {
     private GroupService groupService;
 
     @MessageMapping("/toGroup")
-    public void toGroup(InboundMessageDto inboundMessageDto) {
+    public void toGroup(InboundMessageDto<String> inboundMessageDto) {
         Date date = new Date();
         String fromUser = inboundMessageDto.getFrom();
         String toGroup = inboundMessageDto.getTo();
@@ -138,7 +139,7 @@ public class WebSocketController {
     }
 
     private void flush(){
-        new Thread(() -> messageService.flushTempMessage()).start();
+        executorService.execute(() -> messageService.flushTempMessage());
     }
 
 
