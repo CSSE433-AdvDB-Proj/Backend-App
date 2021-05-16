@@ -113,6 +113,7 @@ public class WebSocketController {
 
     @MessageMapping("/toBoard")
     public void toGroup(InboundDrawingDto inboundDrawingDto) {
+        //TODO: board相关
         System.out.println(inboundDrawingDto);
     }
 
