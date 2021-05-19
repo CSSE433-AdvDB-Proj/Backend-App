@@ -31,6 +31,10 @@ public class NotifyMessageVo {
      */
     private MessageTypeEnum type;
 
+    /**
+     * GroupID （for group invitations）
+     */
+    private String groupId;
 
 }
 

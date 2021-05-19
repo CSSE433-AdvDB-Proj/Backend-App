@@ -112,4 +112,11 @@ public class GroupDao {
 
 
     }
+
+    public GroupEntity getGroupInfo(String groupId) {
+        Query query = Query
+                .empty()
+                .and(Criteria.where("group_id").is(groupId));
+        return cassandraTemplate.selectOne(query, GroupEntity.class);
+    }
 }

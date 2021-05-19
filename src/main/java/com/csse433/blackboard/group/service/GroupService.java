@@ -30,4 +30,6 @@ public interface GroupService {
     List<GroupEntity> getGroupList(String username);
 
     List<GroupEntity> searchGroupExact(String username, String groupName);
+
+    GroupEntity getGroupInfo(String groupId);
 }

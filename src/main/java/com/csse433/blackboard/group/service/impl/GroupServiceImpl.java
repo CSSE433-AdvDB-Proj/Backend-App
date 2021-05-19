@@ -59,6 +59,7 @@ public class GroupServiceImpl implements GroupService {
         notifyMessageVo.setChatId(fromUsername);
         notifyMessageVo.setIsGroupChat(false);
         notifyMessageVo.setType(MessageTypeEnum.GROUP_INVITATION);
+        notifyMessageVo.setGroupId(groupId);
         messagingTemplate.convertAndSendToUser(toUsername, Constants.PERSONAL_CHAT, notifyMessageVo);
         //Store message to Mongo.
         Date date = new Date();
@@ -124,5 +125,10 @@ public class GroupServiceImpl implements GroupService {
                 .stream()
                 .filter(groupEntity -> groupName.equalsIgnoreCase(groupEntity.getGroupName()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public GroupEntity getGroupInfo(String groupId) {
+        return groupDao.getGroupInfo(groupId);
     }
 }

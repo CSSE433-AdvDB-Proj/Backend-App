@@ -35,4 +35,12 @@ public class DrawingController {
         return Result.success(messageService.getDrawing(dtoList, userAccountDto));
     }
 
+//    @PostMapping("/getHistoryDrawing")
+//    public Result<?> getHistoryDrawing(UserAccountDto userAccountDto,
+//                                       @RequestParam String from,
+//                                       @RequestParam(required = false) Long fromTimestamp,
+//                                       @RequestParam(required = false, defaultValue = "false") boolean group) {
+//        //TODO: IMPL
+//    }
+
 }

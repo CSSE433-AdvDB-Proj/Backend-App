@@ -80,4 +80,9 @@ public class GroupController {
                                   @RequestParam String groupName) {
         return Result.success(groupService.searchGroupExact(userAccountDto.getUsername(), groupName));
     }
+
+    @GetMapping("/info")
+    public Result<?> getGroupInfo(@RequestParam String groupId) {
+        return Result.success(groupService.getGroupInfo(groupId));
+    }
 }
