@@ -134,8 +134,8 @@ public class WebSocketController {
         }
 
         NotifyMessageVo notifyMessageVo = messageService.generateNotifyDrawing(inboundDrawingDto, date.getTime());
-        // TODO: Determine destination username
-        messagingTemplate.convertAndSendToUser("TODO", subscriptionPath, notifyMessageVo);
+
+        messagingTemplate.convertAndSendToUser(Constants.PUBLIC_BOARD, subscriptionPath, notifyMessageVo);
     }
 
     private void flush(){
