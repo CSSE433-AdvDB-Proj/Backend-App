@@ -51,4 +51,9 @@ public class Constants {
      * Last retrieved timestamp redis key.
      */
     public static final String LAST_RETRIEVED_TIMESTAMP_REDIS_KEY = "Last_Retrieved_Timestamp";
+
+    /**
+     * public board.
+     */
+    public static final String PUBLIC_BOARD = "public";
 }
