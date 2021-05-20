@@ -116,7 +116,7 @@ public class WebSocketController {
 
     @MessageMapping("/toBoard/{id}")
     public void toGroup(InboundDrawingDto inboundDrawingDto, @DestinationVariable String id) {
-        System.out.println(inboundDrawingDto);
+//        System.out.fprintln(inboundDrawingDto);
         String subscriptionPath = String.format(Constants.BLACKBOARD_CHAT + "/%s", id);
         String invalidUsername = authService.userExists(inboundDrawingDto.getFrom());
         if (StringUtils.isNotBlank(invalidUsername)) {
