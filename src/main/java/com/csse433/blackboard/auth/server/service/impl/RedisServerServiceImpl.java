@@ -51,11 +51,11 @@ public class RedisServerServiceImpl implements RedisServerService, BeanPostProce
 
         executorService.submit(() -> {
             while (true) {
-                if (isConnected) {
-                    log.info("Redis Heart Beat Check: Connected.");
-                } else {
-                    log.error("Redis Heart Beat Check: Reconnecting.");
-                }
+//                if (isConnected) {
+//                    log.info("Redis Heart Beat Check: Connected.");
+//                } else {
+//                    log.error("Redis Heart Beat Check: Reconnecting.");
+//                }
                 try {
                     Thread.sleep(TimeUnit.SECONDS.toMillis(heartbeatInterval));
                 } catch (InterruptedException e) {

@@ -34,6 +34,8 @@ public interface MessageService {
 
     NotifyMessageVo generateGroupNotifyMessage(InboundMessageDto inboundMessageDto, long time);
 
+    NotifyDrawingVo generateDrawingNotifyMessage(InboundDrawingDto inboundDrawingDto);
+
     Map<String,List<OutboundMessageVo>> getGroupMessage(List<RetrieveMessageDto> dtoList, UserAccountDto userAccountDto);
 
     void insertDrawing(InboundDrawingDto inboundDrawingDto, long time);

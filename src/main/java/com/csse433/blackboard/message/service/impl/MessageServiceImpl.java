@@ -79,7 +79,7 @@ public class MessageServiceImpl implements MessageService {
         if (dtoList != null) {
             dtoList = dtoList.stream().filter(dto -> friendService.isFriend(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
             for (RetrieveMessageDto dto : dtoList) {
-                if(connected) {
+                if (connected) {
                     outboundMessageVos.addAll(messageDao.getPersonalMessage(userAccountDto, dto));
                 } else {
                     //Potential Bugs
@@ -99,7 +99,7 @@ public class MessageServiceImpl implements MessageService {
         if (dtoList != null) {
             dtoList = dtoList.stream().filter(dto -> groupService.userInGroup(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
             for (RetrieveMessageDto dto : dtoList) {
-                if(connected) {
+                if (connected) {
                     outboundMessageVos.addAll(messageDao.getGroupMessage(userAccountDto, dto));
                 } else {
                     outboundMessageVos.addAll(messageBakService.getGroupMessage(userAccountDto, dto));
@@ -129,7 +129,7 @@ public class MessageServiceImpl implements MessageService {
         if (dtoList != null) {
 //            dtoList = dtoList.stream().filter(dto -> groupService.userInGroup(userAccountDto.getUsername(), dto.getChatId())).collect(Collectors.toList());
             for (RetrieveDrawingDto dto : dtoList) {
-                if(connected) {
+                if (connected) {
                     outboundDrawingVos.addAll(messageDao.getDrawing(userAccountDto, dto));
                 } else {
                     outboundDrawingVos.addAll(messageBakService.getDrawing(userAccountDto, dto));
@@ -226,7 +226,7 @@ public class MessageServiceImpl implements MessageService {
 
     }
 
-    private MessageEntity sqlMessageToMongoMessage(MessageMongoBak bakMessage){
+    private MessageEntity sqlMessageToMongoMessage(MessageMongoBak bakMessage) {
         MessageEntity mongoMessage = new MessageEntity();
         BeanUtils.copyProperties(bakMessage, mongoMessage);
         return mongoMessage;
@@ -240,6 +240,16 @@ public class MessageServiceImpl implements MessageService {
         notifyMessageVo.setIsGroupChat(true);
         notifyMessageVo.setType(MessageTypeEnum.MESSAGE);
         return notifyMessageVo;
+    }
+
+    @Override
+    public NotifyDrawingVo generateDrawingNotifyMessage(InboundDrawingDto inboundDrawingDto) {
+
+        NotifyDrawingVo notifyDrawingVo = new NotifyDrawingVo();
+        notifyDrawingVo.setContent(JSON.toJSONString(inboundDrawingDto.getContent()));
+        notifyDrawingVo.setTo(inboundDrawingDto.getTo());
+        notifyDrawingVo.setFrom(inboundDrawingDto.getFrom());
+        return notifyDrawingVo;
     }
 
 

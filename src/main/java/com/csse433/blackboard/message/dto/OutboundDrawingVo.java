@@ -22,10 +22,10 @@ public class OutboundDrawingVo {
     @Data
     public static class Content {
         private String color;
-        private int y1;
-        private int x1;
-        private int y0;
-        private int x0;
+        private double y1;
+        private double x1;
+        private double y0;
+        private double x0;
     }
 
 }

@@ -7,6 +7,7 @@ import com.csse433.blackboard.friend.service.FriendService;
 import com.csse433.blackboard.group.service.GroupService;
 import com.csse433.blackboard.message.dto.InboundDrawingDto;
 import com.csse433.blackboard.message.dto.InboundMessageDto;
+import com.csse433.blackboard.message.dto.NotifyDrawingVo;
 import com.csse433.blackboard.message.dto.NotifyMessageVo;
 import com.csse433.blackboard.message.service.MessageService;
 import com.csse433.blackboard.rdbms.service.IMessageMongoBakService;
@@ -29,8 +30,6 @@ import java.util.stream.Collectors;
 @Controller
 @Slf4j
 public class WebSocketController {
-
-
 
 
     @Autowired
@@ -132,13 +131,14 @@ public class WebSocketController {
         } else {
             messageBakService.insertTempDrawing(inboundDrawingDto, date.getTime());
         }
+        NotifyDrawingVo notifyDrawingVo = messageService.generateDrawingNotifyMessage(inboundDrawingDto);
 
-        NotifyMessageVo notifyMessageVo = messageService.generateNotifyDrawing(inboundDrawingDto, date.getTime());
+//        NotifyMessageVo notifyMessageVo = messageService.generateNotifyDrawing(inboundDrawingDto, date.getTime());
 
-        messagingTemplate.convertAndSendToUser(Constants.PUBLIC_BOARD, subscriptionPath, notifyMessageVo);
+        messagingTemplate.convertAndSendToUser(Constants.PUBLIC_BOARD, subscriptionPath, notifyDrawingVo);
     }
 
-    private void flush(){
+    private void flush() {
         executorService.execute(() -> messageService.flushTempMessage());
     }
 
