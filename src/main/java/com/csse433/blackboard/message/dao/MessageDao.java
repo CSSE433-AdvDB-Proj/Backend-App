@@ -156,6 +156,7 @@ public class MessageDao {
             query
                     .addCriteria(Criteria.where("to").is(username))
                     .addCriteria(Criteria.where("from").is(from));
+
         } else {
             query.addCriteria(Criteria.where("to").is(from));
         }

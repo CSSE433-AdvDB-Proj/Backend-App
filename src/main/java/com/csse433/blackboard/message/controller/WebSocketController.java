@@ -139,7 +139,7 @@ public class WebSocketController {
     }
 
     private void flush() {
-        executorService.execute(() -> messageService.flushTempMessage());
+        new Thread(() -> messageService.flushTempMessage()).start();
     }
 
 
